@@ -39,10 +39,10 @@ window.Webflow.push(() => {
       setInputValues();
       setCharacterPreviewClasses();
 
-      console.log('sess', sessionStorage.getItem('currentCharacterId') === null);
+      const userSignedIn = Snipcart.store.getState().customer.status === 'SignedIn';
 
-      // will need to do for logged in character latest too
-      if (sessionStorage.getItem('currentCharacterId') === null) {
+      // No character_id in local storage, and user not logged in
+      if (sessionStorage.getItem('currentCharacterId') === null && !userSignedIn) {
         // Gets random selection for each
         const randomHairColour = getRandomIndex('input[name="hair-colour"]');
         const randomHairStyle = getRandomIndex('input[name="hair-style"]');
@@ -82,7 +82,9 @@ window.Webflow.push(() => {
 
     // if not, tell them they need to sign in and redirect to login page
     if (userSignedIn) {
-      // save to characters table with userId
+      let currentCharacterId = sessionStorage.getItem('currentCharacterId');
+      sessionStorage.setItem('currentCharacterName', $('#hero-name-input').val());
+      currentCharacterId === null ? addCharacter() : updateCharacter();
     } else {
       $('.alert-banner').show();
       $('.alert-banner').innerHtml('blallals');
@@ -143,28 +145,57 @@ window.Webflow.push(() => {
    */
 
   window.buildUserCharacter = function buildUserCharacter() {
-    const record = getRecord();
-    record.then((result) => {
-      // go through each item of the result
-      // if it has a value, check the box
-      // otherwise random - but thinking about it, it's always going to have a value (once it's finished - so expect errors)
+    // user is logged in?
+    let userSignedIn = Snipcart.store.getState().customer.status === 'SignedIn';
+    let record = '';
 
-      sessionStorage.setItem('currentCharacterName', result['fields']['NAME']);
+    if (userSignedIn) {
+      let userEmail = getUserEmail();
+      let characterList = getUserCharacters(userEmail);
+      let $characterDropdown = $('.w-dropdown-list');
 
-      const splitStyleColour = result['fields']['HAIR'].split('-');
+      characterList.then((result) => {
+        result = $.parseJSON(result);
 
-      $('input[value=' + splitStyleColour[1] + ']').prop('checked', true);
-      $('input[value=' + result['fields']['HAIR'] + ']').prop('checked', true);
-      $('input[value=' + result['fields']['EYES'] + ']').prop('checked', true);
-      $('input[value=' + result['fields']['SKIN'] + ']').prop('checked', true);
-      $('#hero-name-input').val(result['fields']['NAME']);
+        // adds all characters to the dropdown
+        $.each(result['records'], function () {
+          $characterDropdown.append(
+            `<a href="#" class="w-dropdown-link" tabindex="0" id="${this.id}">${this['fields']['NAME']}</a>`
+          );
+        });
 
-      getSelectedStyles();
-      displaySelectedColour();
-      checkSelectedHairstyle();
-      renderCharacter();
-    });
+        if (result['records'].length > 0) {
+          const character = result['records'].reduce((a, b) =>
+            a.fields.MODIFIED_AT > b.fields.MODIFIED_AT ? a : b
+          );
+
+          configureCharacter(character['fields']);
+        }
+      });
+    } else {
+      record = getRecord();
+      record.then((result) => {
+        configureCharacter(result['fields']);
+      });
+    }
   };
+
+  function configureCharacter(fields) {
+    sessionStorage.setItem('currentCharacterName', fields['NAME']);
+
+    const splitStyleColour = fields['HAIR'].split('-');
+
+    $('input[value=' + splitStyleColour[1] + ']').prop('checked', true);
+    $('input[value=' + fields['HAIR'] + ']').prop('checked', true);
+    $('input[value=' + fields['EYES'] + ']').prop('checked', true);
+    $('input[value=' + fields['SKIN'] + ']').prop('checked', true);
+    $('#hero-name-input').val(fields['NAME']);
+
+    getSelectedStyles();
+    displaySelectedColour();
+    checkSelectedHairstyle();
+    renderCharacter();
+  }
 
   window.renderCharacter = function renderCharacter() {
     // Hair
@@ -416,10 +447,42 @@ window.Webflow.push(() => {
     }
   }
 
+  function getUserEmail() {
+    let userSignedIn = Snipcart.store.getState().customer.status === 'SignedIn';
+
+    return userSignedIn ? Snipcart.store.getState().customer.email : '';
+  }
+
   /*
    * AirTable Functions
    */
 
+  // GET ALL CHARACTERS FOR USER
+  function getUserCharacters(userEmail) {
+    var myHeaders = new Headers();
+    myHeaders.append('Content-Type', 'application/json');
+    var requestOptions = {
+      method: 'get',
+      headers: myHeaders,
+      redirect: 'follow',
+    };
+
+    const record = fetch(
+      `https://v1.nocodeapi.com/makebelieveme/airtable/nmeOnHAeFloOUpCL?tableName=Characters&filterByFormula=USER_EMAIL="${userEmail}"`,
+      requestOptions
+    )
+      .then((response) => response.text())
+      .then((result) => {
+        // might need to be refactored to get the most recent version, rather than just index 0
+        console.log(result);
+        return result;
+      })
+      .catch((error) => console.log('error', error));
+
+    return record;
+  }
+
+  // GET LATEST CHARACTER
   window.getRecord = function getRecord() {
     const currentCharacterId = sessionStorage.getItem('currentCharacterId');
     const myHeaders = new Headers();
@@ -452,7 +515,7 @@ window.Webflow.push(() => {
         CHARACTER_ID: sessionStorage.getItem('currentCharacterId'),
         BOOK: '03',
         SESSION_ID: localStorage.getItem('sessionId'),
-        USER_ID: sessionStorage.getItem('userId'),
+        USER_EMAIL: getUserEmail(),
       },
     ];
     const myHeaders = new Headers();
@@ -465,7 +528,7 @@ window.Webflow.push(() => {
     };
 
     fetch(
-      'https://v1.nocodeapi.com/makebelieveme/airtable/nmeOnHAeFloOUpCL?tableName=Sessions',
+      'https://v1.nocodeapi.com/makebelieveme/airtable/nmeOnHAeFloOUpCL?tableName=Previews',
       requestOptions
     )
       .then((response) => response.json())
@@ -476,7 +539,7 @@ window.Webflow.push(() => {
     const testBody = [
       {
         NAME: $('#hero-name-input').val(),
-        USER_ID: 'random',
+        USER_EMAIL: getUserEmail(),
         HAIR: styleColourId,
         EYES: eyesId,
         SKIN: skinToneId,
@@ -509,7 +572,7 @@ window.Webflow.push(() => {
         id: sessionStorage.getItem('currentCharacterId'),
         fields: {
           NAME: $('#hero-name-input').val(),
-          USER_ID: 'random',
+          USER_EMAIL: getUserEmail(),
           HAIR: styleColourId,
           EYES: eyesId,
           SKIN: skinToneId,
