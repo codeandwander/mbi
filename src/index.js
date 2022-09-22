@@ -38,29 +38,7 @@ window.Webflow.push(() => {
       setFormStep('#step-1-button');
       setInputValues();
       setCharacterPreviewClasses();
-
-      const userSignedIn = Snipcart.store.getState().customer.status === 'SignedIn';
-
-      // No character_id in local storage, and user not logged in
-      if (sessionStorage.getItem('currentCharacterId') === null && !userSignedIn) {
-        // Gets random selection for each
-        const randomHairColour = getRandomIndex('input[name="hair-colour"]');
-        const randomHairStyle = getRandomIndex('input[name="hair-style"]');
-        const randomEyeColour = getRandomIndex('input[name="Eye-Colour"]');
-        const randomSkinTone = getRandomIndex('input[name="skin-tone"]');
-
-        $('input[name="hair-colour"]').eq(randomHairColour).prop('checked', true);
-        $('input[name="hair-style"]').eq(randomHairStyle).prop('checked', true);
-        $('input[name="Eye-Colour"]').eq(randomEyeColour).prop('checked', true);
-        $('input[name="skin-tone"]').eq(randomSkinTone).prop('checked', true);
-
-        getSelectedStyles();
-        displaySelectedColour();
-        checkSelectedHairstyle();
-        renderCharacter();
-      } else {
-        buildUserCharacter();
-      }
+      randomiseOrLoadCharacter();
 
       // need a better way to handle this
       setTimeout(function () {
@@ -69,6 +47,22 @@ window.Webflow.push(() => {
     });
   };
 
+  window.randomiseOrLoadCharacter = function () {
+    const userSignedIn = Snipcart.store.getState().customer.status === 'SignedIn';
+
+    // No character_id in local storage, and user not logged in
+    if (sessionStorage.getItem('currentCharacterId') === null && !userSignedIn) {
+      randomiseCharacter();
+      getSelectedStyles();
+      displaySelectedColour();
+      checkSelectedHairstyle();
+      renderCharacter();
+    } else {
+      buildUserCharacter();
+    }
+  };
+
+  // Save Character Button Click
   $('.save-character-button').click(function (e) {
     e.stopPropagation();
     e.preventDefault();
@@ -76,35 +70,33 @@ window.Webflow.push(() => {
     saveCharacter();
   });
 
-  function saveCharacter() {
-    // check if user is signed in
-    let userSignedIn = Snipcart.store.getState().customer.status === 'SignedIn';
+  // New Character Button Click
+  $('.new-character-button').click(function (e) {
+    e.preventDefault();
+    e.stopPropagation();
 
-    // if not, tell them they need to sign in and redirect to login page
-    if (userSignedIn) {
-      let currentCharacterId = sessionStorage.getItem('currentCharacterId');
-      sessionStorage.setItem('currentCharacterName', $('#hero-name-input').val());
-      currentCharacterId === null ? addCharacter() : updateCharacter();
-    } else {
-      $('.alert-banner').show();
-      $('.alert-banner').innerHtml('blallals');
-      // display error banner
-    }
-  }
+    createNewCharacter();
+  });
 
+  // Toggle UI elements based on user auth status
   function toggleUiElements() {
     let userSignedIn = Snipcart.store.getState().customer.status === 'SignedIn';
 
     if (userSignedIn) {
       $('.nav-login-btn').html('Profile');
+      $('.select-character').show();
+      $('.new-character-button').show();
     } else {
       $('.nav-login-btn').html('Sign In');
+      $('.select-character').hide();
+      $('.new-character-button').hide();
     }
   }
 
   /*
-/* Form Code
-*/
+  /* Form Code
+  */
+
   $('#step-1-button').click(function (e) {
     e.preventDefault();
     setFormStep('#step-1-button');
@@ -141,9 +133,39 @@ window.Webflow.push(() => {
   });
 
   /*
+   * Character Dropdown Functions
+   */
+
+  $('.w-dropdown-list').on('click', '.character-dropdown-link', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const characterId = $(this).attr('id');
+
+    let record = getRecord(characterId);
+    record.then((result) => {
+      configureCharacter(result['fields']);
+    });
+  });
+
+  /*
    * Build Character Functions
    */
 
+  // Randomise character
+  function randomiseCharacter() {
+    const randomHairColour = getRandomIndex('input[name="hair-colour"]');
+    const randomHairStyle = getRandomIndex('input[name="hair-style"]');
+    const randomEyeColour = getRandomIndex('input[name="Eye-Colour"]');
+    const randomSkinTone = getRandomIndex('input[name="skin-tone"]');
+
+    $('input[name="hair-colour"]').eq(randomHairColour).prop('checked', true);
+    $('input[name="hair-style"]').eq(randomHairStyle).prop('checked', true);
+    $('input[name="Eye-Colour"]').eq(randomEyeColour).prop('checked', true);
+    $('input[name="skin-tone"]').eq(randomSkinTone).prop('checked', true);
+  }
+
+  // Build existing character
   window.buildUserCharacter = function buildUserCharacter() {
     // user is logged in?
     let userSignedIn = Snipcart.store.getState().customer.status === 'SignedIn';
@@ -157,14 +179,18 @@ window.Webflow.push(() => {
       characterList.then((result) => {
         result = $.parseJSON(result);
 
+        // Removes all existing dropdown options, so they're not added twice
+        $characterDropdown.empty();
+
         // adds all characters to the dropdown
         $.each(result['records'], function () {
           $characterDropdown.append(
-            `<a href="#" class="w-dropdown-link" tabindex="0" id="${this.id}">${this['fields']['NAME']}</a>`
+            `<a href="#" class="w-dropdown-link character-dropdown-link" tabindex="0" id="${this.id}">${this['fields']['NAME']}</a>`
           );
         });
 
         if (result['records'].length > 0) {
+          // Get most recently updated character
           const character = result['records'].reduce((a, b) =>
             a.fields.MODIFIED_AT > b.fields.MODIFIED_AT ? a : b
           );
@@ -175,13 +201,16 @@ window.Webflow.push(() => {
     } else {
       record = getRecord();
       record.then((result) => {
+        console.log(result);
         configureCharacter(result['fields']);
       });
     }
   };
 
+  // Configure the interface and preview for the selected character
   function configureCharacter(fields) {
     sessionStorage.setItem('currentCharacterName', fields['NAME']);
+    sessionStorage.setItem('currentCharacterId', fields['RECORD_ID']);
 
     const splitStyleColour = fields['HAIR'].split('-');
 
@@ -197,6 +226,44 @@ window.Webflow.push(() => {
     renderCharacter();
   }
 
+  // Creates a new randomised character
+  function createNewCharacter() {
+    $('.name-input').val('');
+    randomiseCharacter();
+    getSelectedStyles();
+    displaySelectedColour();
+    checkSelectedHairstyle();
+    renderCharacter();
+
+    let character = addCharacter();
+    let $characterDropdown = $('.w-dropdown-list');
+
+    character.then((result) => {
+      console.log(result);
+      $characterDropdown.append(
+        `<a href="#" class="w-dropdown-link character-dropdown-link" tabindex="0" id="${result.id}">${result.fields['NAME']}</a>`
+      );
+    });
+  }
+
+  // Save an existing character to a user profile
+  function saveCharacter() {
+    // check if user is signed in
+    let userSignedIn = Snipcart.store.getState().customer.status === 'SignedIn';
+
+    // if not, tell them they need to sign in and redirect to login page
+    if (userSignedIn) {
+      let currentCharacterId = sessionStorage.getItem('currentCharacterId');
+      sessionStorage.setItem('currentCharacterName', $('#hero-name-input').val());
+      currentCharacterId === null ? addCharacter() : updateCharacter();
+    } else {
+      $('.alert-banner').show();
+      $('.alert-banner').innerHtml('blallals');
+      // display error banner
+    }
+  }
+
+  // Render the character preview
   window.renderCharacter = function renderCharacter() {
     // Hair
     if (styleColourId) {
@@ -230,6 +297,7 @@ window.Webflow.push(() => {
     }
   };
 
+  // Set input values for character choices
   function setInputValues() {
     $('input[name="hair-colour"]').each(function () {
       const colourLabel = $(this).closest('label').find('span').html();
@@ -252,10 +320,10 @@ window.Webflow.push(() => {
     });
   }
 
+  // Set classes for character assets
   function setCharacterPreviewClasses() {
     $('.character-preview-hair-item').each(function () {
       const hairLabel = $(this).find('.character-hair-label').text();
-      console.log(hairLabel);
       $(this).find('.hair').addClass(hairLabel);
     });
   }
@@ -355,6 +423,7 @@ window.Webflow.push(() => {
 
   $('.pick-a-book').click(function (e) {
     e.preventDefault();
+    // this now doesn't work - need to lookup character 
     let currentCharacterId = sessionStorage.getItem('currentCharacterId');
     sessionStorage.setItem('currentCharacterName', $('#hero-name-input').val());
     currentCharacterId === null ? addCharacter() : updateCharacter();
@@ -483,8 +552,8 @@ window.Webflow.push(() => {
   }
 
   // GET LATEST CHARACTER
-  window.getRecord = function getRecord() {
-    const currentCharacterId = sessionStorage.getItem('currentCharacterId');
+  window.getRecord = function getRecord(characterId) {
+    const currentCharacterId = characterId || sessionStorage.getItem('currentCharacterId');
     const myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     const requestOptions = {
@@ -499,6 +568,7 @@ window.Webflow.push(() => {
     )
       .then((response) => response.json())
       .then((result) => {
+        console.log(result);
         // might need to be refactored to get the most recent version, rather than just index 0
         return result['records'][0];
       })
@@ -554,7 +624,7 @@ window.Webflow.push(() => {
       body: JSON.stringify(testBody),
     };
 
-    fetch(
+    const record = fetch(
       'https://v1.nocodeapi.com/makebelieveme/airtable/nmeOnHAeFloOUpCL?tableName=Characters',
       requestOptions
     )
@@ -562,8 +632,11 @@ window.Webflow.push(() => {
       .then((result) => {
         // might need to be refactored to get the most recent version, rather than just index 0
         sessionStorage.setItem('currentCharacterId', result[0]['fields']['RECORD_ID']);
+        return result[0];
       })
       .catch((error) => console.log('error', error));
+
+    return record;
   }
 
   function updateCharacter() {
