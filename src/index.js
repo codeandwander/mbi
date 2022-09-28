@@ -60,7 +60,7 @@ window.Webflow.push(() => {
     // No character_id in local storage, and user not logged in
     if (sessionStorage.getItem('currentCharacterId') === null && !userSignedIn) {
       character.randomiseCharacter();
-      getSelectedStyles();
+      window.getSelectedStyles();
       hair.displaySelectedColour();
       hair.checkSelectedHairstyle();
       character.renderCharacterPreview();
@@ -98,6 +98,7 @@ window.Webflow.push(() => {
 
     let record = airtable.getRecord(characterId);
     record.then((result) => {
+      console.log(result);
       character.configureCharacter(result['fields']);
     });
   });
@@ -175,6 +176,7 @@ window.Webflow.push(() => {
   // Gets the ID of the selected hairstyle, e.g. hs001
   window.getSelectedStyles = function getSelectedStyles() {
     const styleAndColourID = $('input[name=hair-style]:checked', '#character-creation-form').val();
+    console.log('style-colour', styleAndColourID);
     hairstyleId = styleAndColourID.slice(0, 5);
     eyesId = $('input[name=Eye-Colour]:checked', '#character-creation-form').val().toLowerCase();
     skinToneId = $('input[name=skin-tone]:checked', '#character-creation-form').val().toLowerCase();

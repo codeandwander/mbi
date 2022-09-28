@@ -55,7 +55,7 @@ export function configureCharacter(fields) {
 export function createNewCharacter() {
   $('.name-input').val('');
   randomiseCharacter();
-  getSelectedStyles();
+  window.getSelectedStyles();
   hair.displaySelectedColour();
   hair.checkSelectedHairstyle();
   renderCharacterPreview();
