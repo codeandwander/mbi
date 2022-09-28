@@ -11,28 +11,17 @@ export function buildUserCharacter() {
   if (userSignedIn) {
     let userEmail = snipcart.getUserEmail();
     let characterList = airtable.getUserCharacters(userEmail);
-    let $characterDropdown = $('.w-dropdown-list');
 
     characterList.then((result) => {
       result = $.parseJSON(result);
-
-      // Removes all existing dropdown options, so they're not added twice
-      $characterDropdown.empty();
-
-      // adds all characters to the character selection dropdown
-      $.each(result['records'], function () {
-        $characterDropdown.append(
-          `<a href="#" class="w-dropdown-link character-dropdown-link" tabindex="0" id="${this.id}">${this['fields']['NAME']}</a>`
-        );
-      });
+      form.appendCharacterDropdownItems();
 
       if (result['records'].length > 0) {
         // Get most recently updated character
-        const character = result['records'].reduce((a, b) =>
+        const latestCharacter = result['records'].reduce((a, b) =>
           a.fields.MODIFIED_AT > b.fields.MODIFIED_AT ? a : b
         );
-
-        configureCharacter(character['fields']);
+        configureCharacter(latestCharacter['fields']);
       }
     });
   } else {
@@ -70,15 +59,8 @@ export function createNewCharacter() {
   hair.displaySelectedColour();
   hair.checkSelectedHairstyle();
   renderCharacterPreview();
-
-  let character = airtable.addCharacter();
-  let $characterDropdown = $('.w-dropdown-list');
-
-  character.then((result) => {
-    $characterDropdown.append(
-      `<a href="#" class="w-dropdown-link character-dropdown-link" tabindex="0" id="${result.id}">${result.fields['NAME']}</a>`
-    );
-  });
+  airtable.addCharacter();
+  form.appendCharacterDropdownItems();
 }
 
 // Save an existing character to a user profile
@@ -91,6 +73,7 @@ export function saveCharacter() {
     let currentCharacterId = sessionStorage.getItem('currentCharacterId');
     sessionStorage.setItem('currentCharacterName', $('#hero-name-input').val());
     currentCharacterId === null ? airtable.addCharacter() : airtable.updateCharacter();
+    form.appendCharacterDropdownItems();
   } else {
     $('.alert-banner').show();
     $('.alert-banner').innerHtml('blallals');
@@ -134,6 +117,7 @@ export function renderCharacterPreview() {
 
 // Randomise character
 export function randomiseCharacter() {
+  $('.name-input').val('');
   const randomHairColour = form.getRandomIndex('input[name="hair-colour"]');
   const randomHairStyle = form.getRandomIndex('input[name="hair-style"]');
   const randomEyeColour = form.getRandomIndex('input[name="Eye-Colour"]');

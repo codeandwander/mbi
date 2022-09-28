@@ -1,3 +1,6 @@
+import * as airtable from '../src/airtable.js';
+import * as snipcart from '../src/snipcart.js';
+
 // Set input values for character choices
 export function setInputValues() {
   $('input[name="hair-colour"]').each(function () {
@@ -31,7 +34,8 @@ export function setCharacterPreviewClasses() {
 
 export function displayBookControls() {
   $('.book-controls').each(function () {
-    const currentId = $(this).attr('id');
+    const currentId = $(this).attr('id').slice(0, -9);
+    console.log('book-controls-id', currentId);
     currentId === selectedBook ? $(this).css('display', 'flex') : $(this).hide();
   });
 }
@@ -47,4 +51,21 @@ export function setFormStep(stepButtonID) {
     .prop('disabled', false)
     .removeClass('selected-form-step');
   $(stepButtonID).prop('disabled', true).addClass('selected-form-step');
+}
+
+export function appendCharacterDropdownItems() {
+  let userEmail = snipcart.getUserEmail();
+  let characterList = airtable.getUserCharacters(userEmail);
+  let $characterDropdown = $('.w-dropdown-list');
+  $characterDropdown.empty();
+
+  characterList.then((result) => {
+    result = $.parseJSON(result);
+
+    $.each(result['records'], function () {
+      $characterDropdown.append(
+        `<a href="#" class="w-dropdown-link character-dropdown-link" tabindex="0" id="${this.id}">${this.fields['NAME']}</a>`
+      );
+    });
+  });
 }

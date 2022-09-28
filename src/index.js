@@ -204,7 +204,7 @@ window.Webflow.push(() => {
   $('.book-container').each(function () {
     // lowercase and hyphenates an id, adds to each book item
     const id = $(this).closest('div').find('.book-title').html().toLowerCase().replace(/ /g, '-');
-    $(this).prop('id', id);
+    $(this).prop('id', id + '-book');
   });
 
   $('.book-container-large').each(function () {
@@ -223,7 +223,9 @@ window.Webflow.push(() => {
 
   $('.book-container').click(function (e) {
     e.preventDefault();
-    selectedBook = $(this).prop('id');
+    selectedBook = $(this).prop('id').slice(0, -5);
+
+    console.log(selectedBook);
 
     $('.book-small-list-container').hide();
     $('.book-container-large').each(function () {
@@ -242,6 +244,10 @@ window.Webflow.push(() => {
     e.preventDefault();
     localStorage.setSessionId();
     form.displayBookControls();
+    $('.add-to-cart-btn').attr(
+      'data-item-custom1-value',
+      window.sessionStorage.getItem('currentCharacterName')
+    );
 
     // post to airtable
     airtable.postToAirTable();
