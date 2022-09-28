@@ -2,21 +2,21 @@
     {
         "id": "super-strength-2",
         "price": 79.99,
-        "url": "https://cdn.jsdelivr.net/gh/imbenhayward/MakeBelieveIdeas-v2@1.3.2/src/validator.json"
+        "url": "https://codesandbox.io/s/festive-browser-l761h0?file=/src/assets/all-products.json"
     },
     {
         "id": "super-strength",
         "price": 79.99,
-        "url": "https://cdn.jsdelivr.net/gh/imbenhayward/MakeBelieveIdeas-v2@1.3.2/src/validator.json"
+        "url": "https://codesandbox.io/s/festive-browser-l761h0?file=/src/assets/all-products.json"
     },
     {
         "id": "donut-disaster",
         "price": 79.99,
-        "url": "https://cdn.jsdelivr.net/gh/imbenhayward/MakeBelieveIdeas-v2@1.3.2/src/validator.json"
+        "url": "https://codesandbox.io/s/festive-browser-l761h0?file=/src/assets/all-products.json"
     },
     {
         "id": "super-strength",
         "price": 79.99,
-        "url": "https://cdn.jsdelivr.net/gh/imbenhayward/MakeBelieveIdeas-v2@1.3.2/src/validator.json"
+        "url": "https://codesandbox.io/s/festive-browser-l761h0?file=/src/assets/all-products.json"
     }
 ]
