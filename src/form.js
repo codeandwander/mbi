@@ -35,7 +35,6 @@ export function setCharacterPreviewClasses() {
 export function displayBookControls() {
   $('.book-controls').each(function () {
     const currentId = $(this).attr('id').slice(0, -9);
-    console.log('book-controls-id', currentId);
     currentId === selectedBook ? $(this).css('display', 'flex') : $(this).hide();
   });
 }

@@ -56,7 +56,7 @@ export function postToAirTable() {
     {
       // need to factor in log in character stuff
       CHARACTER_ID: sessionStorage.getItem('currentCharacterId'),
-      BOOK_ID: '03',
+      BOOK_ID: window.selectedBook,
       SESSION_ID: localStorage.getItem('sessionId'),
       USER_EMAIL: snipcart.getUserEmail(),
     },
@@ -86,6 +86,8 @@ export function addCharacter() {
       HAIR: styleColourId,
       EYES: eyesId,
       SKIN: skinToneId,
+      PRONOUNS: window.pronouns,
+      LANGUAGE: window.language,
     },
   ];
   const myHeaders = new Headers();
@@ -104,7 +106,7 @@ export function addCharacter() {
     .then((response) => response.json())
     .then((result) => {
       // might need to be refactored to get the most recent version, rather than just index 0
-      form.appendCharacterDropdownItems(result[0]);
+      form.appendCharacterDropdownItems();
       sessionStorage.setItem('currentCharacterId', result[0]['fields']['RECORD_ID']);
       return result[0];
     })
@@ -123,6 +125,8 @@ export function updateCharacter() {
         HAIR: styleColourId,
         EYES: eyesId,
         SKIN: skinToneId,
+        PRONOUNS: window.pronouns,
+        LANGUAGE: window.language,
       },
     },
   ];

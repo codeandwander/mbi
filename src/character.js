@@ -60,7 +60,6 @@ export function createNewCharacter() {
   hair.checkSelectedHairstyle();
   renderCharacterPreview();
   airtable.addCharacter();
-  form.appendCharacterDropdownItems();
 }
 
 // Save an existing character to a user profile

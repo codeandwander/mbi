@@ -3,6 +3,7 @@ import * as character from '../src/character.js';
 import * as form from '../src/form.js';
 import * as hair from '../src/hair.js';
 import * as localStorage from '../src/localStorage.js';
+import * as navigation from '../src/navigation.js';
 import * as snipcart from '../src/snipcart.js';
 
 window.Webflow ||= [];
@@ -18,6 +19,8 @@ window.Webflow.push(() => {
   window.sessionRow = '';
   window.selectedBook = '';
   window.currentCharacterName = '';
+  window.pronouns = '';
+  window.language = '';
 
   const masterplan = new MasterPlan(document.getElementById('masterplan'), {
     clientID: '5140',
@@ -38,9 +41,7 @@ window.Webflow.push(() => {
   window.onload = function () {
     // this might be causing page to not always load
     Snipcart.events.on('snipcart.initialized', (snipcartState) => {
-      $('.book-preview-container').hide();
-      $('.loading-section').hide();
-
+      navigation.navigateToCharacterSelection();
       snipcart.toggleUiElements();
       form.setFormStep('#step-1-button');
       form.setInputValues();
@@ -98,9 +99,20 @@ window.Webflow.push(() => {
 
     let record = airtable.getRecord(characterId);
     record.then((result) => {
-      console.log(result);
       character.configureCharacter(result['fields']);
     });
+  });
+
+  /*
+   * LANGUAGE AND PRONOUN RADIO BUTTONS
+   */
+
+  $('.pronoun-radio-button').click(function () {
+    window.pronouns = $(this).val();
+  });
+
+  $('.language-radio-button').click(function () {
+    window.language = $(this).val();
   });
 
   /*
@@ -176,7 +188,6 @@ window.Webflow.push(() => {
   // Gets the ID of the selected hairstyle, e.g. hs001
   window.getSelectedStyles = function getSelectedStyles() {
     const styleAndColourID = $('input[name=hair-style]:checked', '#character-creation-form').val();
-    console.log('style-colour', styleAndColourID);
     hairstyleId = styleAndColourID.slice(0, 5);
     eyesId = $('input[name=Eye-Colour]:checked', '#character-creation-form').val().toLowerCase();
     skinToneId = $('input[name=skin-tone]:checked', '#character-creation-form').val().toLowerCase();
@@ -209,6 +220,18 @@ window.Webflow.push(() => {
     $(this).prop('id', id + '-book');
   });
 
+  $('.book-container').click(function (e) {
+    e.preventDefault();
+    selectedBook = $(this).prop('id').slice(0, -5);
+
+    $('.book-small-list-container').hide();
+    $('.book-container-large').each(function () {
+      console.log(selectedBook);
+      const expectedId = 'large-' + selectedBook;
+      $(this).attr('id') === expectedId ? $(this).css('display', 'flex') : $(this).hide();
+    });
+  });
+
   $('.book-container-large').each(function () {
     // lowercase and hyphenates an id, adds to each book item
     const id = $(this).closest('div').find('.book-title').html().toLowerCase().replace(/ /g, '-');
@@ -223,25 +246,6 @@ window.Webflow.push(() => {
     $('.book-container-large').hide();
   });
 
-  $('.book-container').click(function (e) {
-    e.preventDefault();
-    selectedBook = $(this).prop('id').slice(0, -5);
-
-    console.log(selectedBook);
-
-    $('.book-small-list-container').hide();
-    $('.book-container-large').each(function () {
-      const expectedId = 'large-' + selectedBook;
-      $(this).attr('id') === expectedId ? $(this).css('display', 'flex') : $(this).hide();
-    });
-
-    // $('#large-' + selectedBook).css('display', 'flex');
-
-    // // need to move this to new book display and show the full screen here instead
-    // $('.generate-book-preview').prop('text', 'Generate Preview For ' + selectedBook);
-    // $('.generate-book-preview').show();
-  });
-
   $('.see-your-story-button').click(function (e) {
     e.preventDefault();
     localStorage.setSessionId();
@@ -253,6 +257,7 @@ window.Webflow.push(() => {
 
     // post to airtable
     airtable.postToAirTable();
+    airtable.updateCharacter();
     // wait for response from circular software
 
     // when response received, display preview
@@ -270,5 +275,14 @@ window.Webflow.push(() => {
     e.preventDefault();
     $('.book-preview-container').hide();
     $('.book-selector-container').show();
+  });
+
+  /*
+   * Preview Screen
+   */
+
+  $('.add-to-cart-btn').click(function (e) {
+    navigation.navigateToCharacterSelection();
+    character.createNewCharacter();
   });
 });
