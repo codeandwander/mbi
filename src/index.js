@@ -52,7 +52,7 @@ window.Webflow.push(() => {
       // need a better way to handle this
       setTimeout(function () {
         document.getElementsByTagName('html')[0].style.visibility = 'visible';
-        buildPage(1);
+        pagination.buildPage(1);
       }, 500);
     });
   };
@@ -76,97 +76,17 @@ window.Webflow.push(() => {
    * PAGINATION
    */
 
-  // Get the item count
-  var blackHairList;
-  var blondeHairList;
-  var brownHairList;
-  var numberOfItems;
-  var numberPerPage = 9;
-  var currentPage = 1;
-  var numberOfPages;
-
   $('#next-pagination-button').click(function () {
-    if (currentPage === numberOfPages) return;
-    currentPage += 1;
-    buildPage(currentPage);
+    if (window.currentPage === window.numberOfPages) return;
+    window.currentPage += 1;
+    pagination.buildPage(window.currentPage);
   });
 
   $('#prev-pagination-button').click(function () {
-    if (currentPage === 1) return;
-    currentPage -= 1;
-    buildPage(currentPage);
+    if (window.currentPage === 1) return;
+    window.currentPage -= 1;
+    pagination.buildPage(window.currentPage);
   });
-
-  function getElements() {
-    blackHairList = document.querySelectorAll(
-      '.hair-collection-wrapper.black .hair-style-container'
-    );
-
-    // eslint-disable-next-line prettier/prettier
-    blondeHairList = document.querySelectorAll(
-      '.hair-collection-wrapper.blonde .hair-style-container'
-    );
-
-    brownHairList = document.querySelectorAll(
-      '.hair-collection-wrapper.brown .hair-style-container'
-    );
-
-    numberOfItems = blackHairList.length;
-    numberOfPages = Math.ceil(numberOfItems / numberPerPage);
-  }
-
-  function buildPage(currPage) {
-    getElements();
-    const trimStart = (currPage - 1) * numberPerPage;
-    const trimEnd = trimStart + numberPerPage;
-    // will need to do this for each colour
-    var blackElems = Array.prototype.slice.call(blackHairList, trimStart, trimEnd);
-    var blondeElems = Array.prototype.slice.call(blondeHairList, trimStart, trimEnd);
-    var brownElems = Array.prototype.slice.call(brownHairList, trimStart, trimEnd);
-
-    // // Prev button diabled if current page is 1
-    // if (currPage === 1) {
-    //   $('#prev-pagination-button').addClass('disable-click');
-    // }
-
-    // // Next button disabled if current page == number of pages
-    // if (currPage === numberOfPages) {
-    //   $('#next-pagination-button').attr('disabled', 'disabled');
-    // }
-
-    function showElements(array) {
-      [].forEach.call(array, function (item) {
-        item.style.display = 'block';
-      });
-    }
-
-    function hideElements(array) {
-      [].forEach.call(array, function (item) {
-        item.style.display = 'none';
-      });
-    }
-
-    // hide all
-    hideElements(blackHairList);
-    hideElements(blondeHairList);
-    hideElements(brownHairList);
-    showElements(blackElems);
-    showElements(blondeElems);
-    showElements(brownElems);
-
-    // // show selected 9
-    // [].forEach.call(blackElems, function (item) {
-    //   item.style.display = 'block';
-    // });
-
-    // [].forEach.call(blondeElems, function (item) {
-    //   item.style.display = 'block';
-    // });
-
-    // [].forEach.call(brownElems, function (item) {
-    //   item.style.display = 'block';
-    // });
-  }
 
   /*
    * JQUERY FUNCTIONS
