@@ -25,7 +25,9 @@ export function updateStyleColourId() {
 }
 
 // Checks the selected hairstyle
-export function checkSelectedHairstyle() {
+export function checkSelectedHairstyle(callback) {
   updateStyleColourId();
   $('input[value="' + styleColourId + '"]').prop('checked', true);
+
+  callback && callback();
 }

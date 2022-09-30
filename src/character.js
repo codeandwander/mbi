@@ -1,6 +1,7 @@
 import * as airtable from '../src/airtable.js';
 import * as form from '../src/form.js';
 import * as hair from '../src/hair.js';
+import * as pagination from '../src/pagination.js';
 import * as snipcart from '../src/snipcart.js';
 
 // Build existing character
@@ -47,7 +48,9 @@ export function configureCharacter(fields) {
 
   getSelectedStyles();
   hair.displaySelectedColour();
-  hair.checkSelectedHairstyle();
+  hair.checkSelectedHairstyle(function () {
+    pagination.buildPage(1);
+  });
   renderCharacterPreview();
 }
 
@@ -57,7 +60,9 @@ export function createNewCharacter() {
   randomiseCharacter();
   window.getSelectedStyles();
   hair.displaySelectedColour();
-  hair.checkSelectedHairstyle();
+  hair.checkSelectedHairstyle(function () {
+    pagination.buildPage(1);
+  });
   renderCharacterPreview();
   airtable.addCharacter();
 }

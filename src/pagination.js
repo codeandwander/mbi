@@ -4,6 +4,7 @@ var blondeHairList;
 var brownHairList;
 var numberOfItems;
 var numberPerPage = 9;
+var indexOfSelectedItem;
 window.currentPage = 1;
 window.numberOfPages;
 
@@ -21,8 +22,16 @@ function getElements() {
   window.numberOfPages = Math.ceil(numberOfItems / numberPerPage);
 }
 
+function getPageOfSelectedItem() {
+  blackHairList.forEach((item, index) => {
+    console.log(index, item.querySelector('input[name="hair-style"]').checked);
+  });
+}
+
 export function buildPage(currPage) {
   getElements();
+  getPageOfSelectedItem();
+
   const trimStart = (currPage - 1) * numberPerPage;
   const trimEnd = trimStart + numberPerPage;
   // will need to do this for each colour

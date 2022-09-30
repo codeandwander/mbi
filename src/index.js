@@ -52,7 +52,6 @@ window.Webflow.push(() => {
       // need a better way to handle this
       setTimeout(function () {
         document.getElementsByTagName('html')[0].style.visibility = 'visible';
-        pagination.buildPage(1);
       }, 500);
     });
   };
@@ -65,7 +64,9 @@ window.Webflow.push(() => {
       character.randomiseCharacter();
       window.getSelectedStyles();
       hair.displaySelectedColour();
-      hair.checkSelectedHairstyle();
+      hair.checkSelectedHairstyle(function () {
+        pagination.buildPage(1);
+      });
       character.renderCharacterPreview();
     } else {
       character.buildUserCharacter();
