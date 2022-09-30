@@ -24,17 +24,22 @@ function getElements() {
 
 function getPageOfSelectedItem() {
   blackHairList.forEach((item, index) => {
-    console.log(index, item.querySelector('input[name="hair-style"]').checked);
+    if (item.querySelector('input[name="hair-style"]').checked) {
+      indexOfSelectedItem = index;
+    }
   });
+
+  window.currentPage = Math.ceil(indexOfSelectedItem / 9);
 }
 
 export function buildPage(currPage) {
   getElements();
-  getPageOfSelectedItem();
+  // Used to determine if pagination buttons are selecting currentPage
+  currPage ? '' : getPageOfSelectedItem();
 
-  const trimStart = (currPage - 1) * numberPerPage;
+  const trimStart = (window.currentPage - 1) * numberPerPage;
   const trimEnd = trimStart + numberPerPage;
-  // will need to do this for each colour
+
   var blackElems = Array.prototype.slice.call(blackHairList, trimStart, trimEnd);
   var blondeElems = Array.prototype.slice.call(blondeHairList, trimStart, trimEnd);
   var brownElems = Array.prototype.slice.call(brownHairList, trimStart, trimEnd);

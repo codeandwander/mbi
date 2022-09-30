@@ -49,7 +49,7 @@ export function configureCharacter(fields) {
   getSelectedStyles();
   hair.displaySelectedColour();
   hair.checkSelectedHairstyle(function () {
-    pagination.buildPage(1);
+    pagination.buildPage();
   });
   renderCharacterPreview();
 }
@@ -61,7 +61,7 @@ export function createNewCharacter() {
   window.getSelectedStyles();
   hair.displaySelectedColour();
   hair.checkSelectedHairstyle(function () {
-    pagination.buildPage(1);
+    pagination.buildPage();
   });
   renderCharacterPreview();
   airtable.addCharacter();

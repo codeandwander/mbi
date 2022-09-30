@@ -65,7 +65,7 @@ window.Webflow.push(() => {
       window.getSelectedStyles();
       hair.displaySelectedColour();
       hair.checkSelectedHairstyle(function () {
-        pagination.buildPage(1);
+        pagination.buildPage();
       });
       character.renderCharacterPreview();
     } else {
