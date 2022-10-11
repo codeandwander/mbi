@@ -3,7 +3,7 @@ var blackHairList;
 var blondeHairList;
 var brownHairList;
 var numberOfItems;
-var numberPerPage = 9;
+window.numberPerPage;
 var indexOfSelectedItem;
 window.currentPage = 1;
 window.numberOfPages;
@@ -19,17 +19,28 @@ function getElements() {
   brownHairList = document.querySelectorAll('.hair-collection-wrapper.brown .hair-style-container');
 
   numberOfItems = blackHairList.length;
-  window.numberOfPages = Math.ceil(numberOfItems / numberPerPage);
+  window.numberOfPages = Math.ceil(numberOfItems / window.numberPerPage);
 }
 
+// Should be a DRY way of doing this.
 function getPageOfSelectedItem() {
-  blackHairList.forEach((item, index) => {
-    if (item.querySelector('input[name="hair-style"]').checked) {
-      indexOfSelectedItem = index;
-    }
-  });
+  if (window.hairColour === 'black') {
+    blackHairList.forEach((item, index) => {
+      if (item.querySelector('input[name="hair-style"]').checked) {
+        indexOfSelectedItem = index;
+      }
+    });
+  }
 
-  window.currentPage = Math.ceil(indexOfSelectedItem / 9);
+  if (window.hairColour === 'blonde') {
+    blondeHairList.forEach((item, index) => {
+      if (item.querySelector('input[name="hair-style"]').checked) {
+        indexOfSelectedItem = index;
+      }
+    });
+  }
+
+  window.currentPage = Math.ceil((indexOfSelectedItem + 1) / 9);
 }
 
 export function buildPage(currPage) {
@@ -37,8 +48,8 @@ export function buildPage(currPage) {
   // Used to determine if pagination buttons are selecting currentPage
   currPage ? '' : getPageOfSelectedItem();
 
-  const trimStart = (window.currentPage - 1) * numberPerPage;
-  const trimEnd = trimStart + numberPerPage;
+  const trimStart = (window.currentPage - 1) * window.numberPerPage;
+  const trimEnd = trimStart + window.numberPerPage;
 
   var blackElems = Array.prototype.slice.call(blackHairList, trimStart, trimEnd);
   var blondeElems = Array.prototype.slice.call(blondeHairList, trimStart, trimEnd);

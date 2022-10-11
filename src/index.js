@@ -2,6 +2,7 @@ import * as airtable from '../src/airtable.js';
 import * as character from '../src/character.js';
 import * as form from '../src/form.js';
 import * as hair from '../src/hair.js';
+import * as loading from '../src/loading.js';
 import * as localStorage from '../src/localStorage.js';
 import * as navigation from '../src/navigation.js';
 import * as pagination from '../src/pagination.js';
@@ -22,6 +23,25 @@ window.Webflow.push(() => {
   window.currentCharacterName = '';
   window.pronouns = '';
   window.language = '';
+
+  // Responsive Pagination
+  $(document).ready(function () {
+    var resizeDelay = 200;
+    var doResize = true;
+    var resizer = function () {
+      if (doResize) {
+        window.innerWidth <= 767 ? (window.numberPerPage = 3) : (window.numberPerPage = 9);
+        pagination.buildPage();
+        doResize = false;
+      }
+    };
+    var resizerInterval = setInterval(resizer, resizeDelay);
+    resizer();
+
+    $(window).resize(function () {
+      doResize = true;
+    });
+  });
 
   const masterplan = new MasterPlan(document.getElementById('masterplan'), {
     clientID: '5140',
@@ -48,11 +68,6 @@ window.Webflow.push(() => {
       form.setInputValues();
       form.setCharacterPreviewClasses();
       randomiseOrLoadCharacter();
-
-      // need a better way to handle this
-      setTimeout(function () {
-        document.getElementsByTagName('html')[0].style.visibility = 'visible';
-      }, 500);
     });
   };
 
@@ -67,7 +82,9 @@ window.Webflow.push(() => {
       hair.checkSelectedHairstyle(function () {
         pagination.buildPage();
       });
-      character.renderCharacterPreview();
+      character.renderCharacterPreview(function () {
+        loading.displayElements();
+      });
     } else {
       character.buildUserCharacter();
     }
@@ -225,6 +242,20 @@ window.Webflow.push(() => {
     $('.character-builder-container').hide();
     $('.book-selector-container').show();
   });
+
+  // const divs = document.querySelectorAll('.pick-a-book');
+
+  // divs.forEach((el) =>
+  //   el.addEventListener('touchend', (e) => {
+  //     e.preventDefault();
+  //     // this now doesn't work - need to lookup character
+  //     let currentCharacterId = sessionStorage.getItem('currentCharacterId');
+  //     sessionStorage.setItem('currentCharacterName', $('#hero-name-input').val());
+  //     currentCharacterId === null ? airtable.addCharacter() : airtable.updateCharacter();
+  //     $('.character-builder-container').hide();
+  //     $('.book-selector-container').show();
+  //   })
+  // );
 
   $('.edit-character-button').click(function (e) {
     e.preventDefault();

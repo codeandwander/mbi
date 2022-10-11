@@ -1,6 +1,7 @@
 import * as airtable from '../src/airtable.js';
 import * as form from '../src/form.js';
 import * as hair from '../src/hair.js';
+import * as loading from '../src/loading.js';
 import * as pagination from '../src/pagination.js';
 import * as snipcart from '../src/snipcart.js';
 
@@ -51,7 +52,9 @@ export function configureCharacter(fields) {
   hair.checkSelectedHairstyle(function () {
     pagination.buildPage();
   });
-  renderCharacterPreview();
+  renderCharacterPreview(function () {
+    loading.displayElements();
+  });
 }
 
 // Creates a new randomised character
@@ -86,7 +89,7 @@ export function saveCharacter() {
 }
 
 // Render the character preview
-export function renderCharacterPreview() {
+export function renderCharacterPreview(callback) {
   // Hair
   if (styleColourId) {
     $('.hair:visible').first().hide();
@@ -117,6 +120,8 @@ export function renderCharacterPreview() {
     const random = Math.floor(Math.random() * length);
     $('.skin-container img').eq(random).show();
   }
+
+  callback && callback();
 }
 
 // Randomise character
