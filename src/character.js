@@ -1,6 +1,5 @@
 import * as airtable from '../src/airtable.js';
 import * as form from '../src/form.js';
-import * as hair from '../src/hair.js';
 import * as loading from '../src/loading.js';
 import * as pagination from '../src/pagination.js';
 import * as snipcart from '../src/snipcart.js';
@@ -45,11 +44,15 @@ export function configureCharacter(fields) {
   $('input[value=' + fields['HAIR'] + ']').prop('checked', true);
   $('input[value=' + fields['EYES'] + ']').prop('checked', true);
   $('input[value=' + fields['SKIN'] + ']').prop('checked', true);
+  $('input[value=' + fields['COSTUME'] + ']').prop('checked', true);
+  $('input[value=' + fields['MASK'] + ']').prop('checked', true);
+  $('input[value=' + fields['CAPE'] + ']').prop('checked', true);
+  $('input[value=' + fields['SPECIAL'] + ']').prop('checked', true);
   $('#hero-name-input').val(fields['NAME']);
 
-  getSelectedStyles();
-  hair.displaySelectedColour();
-  hair.checkSelectedHairstyle(function () {
+  window.getSelectedStyles();
+  form.displaySelectedColour();
+  form.checkSelectedHairstyle(function () {
     pagination.buildPage();
   });
   renderCharacterPreview(function () {
@@ -62,8 +65,8 @@ export function createNewCharacter() {
   $('.name-input').val('');
   randomiseCharacter();
   window.getSelectedStyles();
-  hair.displaySelectedColour();
-  hair.checkSelectedHairstyle(function () {
+  form.displaySelectedColour();
+  form.checkSelectedHairstyle(function () {
     pagination.buildPage();
   });
   renderCharacterPreview();
@@ -119,6 +122,46 @@ export function renderCharacterPreview(callback) {
     const { length } = $('.skin-container img');
     const random = Math.floor(Math.random() * length);
     $('.skin-container img').eq(random).show();
+  }
+
+  // Costume
+  if (costumeId) {
+    $('.costume:visible').first().hide();
+    $('.' + costumeId).show();
+  } else {
+    const { length } = $('.costume-container img');
+    const random = Math.floor(Math.random() * length);
+    $('.costume-container img').eq(random).show();
+  }
+
+  // Mask
+  if (maskId) {
+    $('.mask:visible').first().hide();
+    $('.' + maskId).show();
+  } else {
+    const { length } = $('.mask-container img');
+    const random = Math.floor(Math.random() * length);
+    $('.mask-container img').eq(random).show();
+  }
+
+  // Cape
+  if (capeId) {
+    $('.cape:visible').first().hide();
+    $('.' + capeId).show();
+  } else {
+    const { length } = $('.cape-container img');
+    const random = Math.floor(Math.random() * length);
+    $('.cape-container img').eq(random).show();
+  }
+
+  // Special
+  if (specialId) {
+    $('.special:visible').first().hide();
+    $('.' + specialId).show();
+  } else {
+    const { length } = $('.special-container img');
+    const random = Math.floor(Math.random() * length);
+    $('.special-container img').eq(random).show();
   }
 
   callback && callback();

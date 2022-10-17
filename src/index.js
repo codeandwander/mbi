@@ -16,6 +16,10 @@ window.Webflow.push(() => {
   window.styleColourId = hairstyleId + '-' + hairColour;
   window.eyesId = '';
   window.skinToneId = '';
+  window.costumeId = '';
+  window.maskId = '';
+  window.capeId = '';
+  window.specialId = '';
   window.userId = '';
   window.sessionId = '';
   window.sessionRow = '';
@@ -78,8 +82,8 @@ window.Webflow.push(() => {
     if (sessionStorage.getItem('currentCharacterId') === null && !userSignedIn) {
       character.randomiseCharacter();
       window.getSelectedStyles();
-      hair.displaySelectedColour();
-      hair.checkSelectedHairstyle(function () {
+      form.displaySelectedColour();
+      form.checkSelectedHairstyle(function () {
         pagination.buildPage();
       });
       character.renderCharacterPreview(function () {
@@ -88,6 +92,18 @@ window.Webflow.push(() => {
     } else {
       character.buildUserCharacter();
     }
+  };
+
+  // Gets the ID of the selected hairstyle, e.g. hs001
+  window.getSelectedStyles = function getSelectedStyles() {
+    const styleAndColourID = $('input[name=hair-style]:checked', '#character-creation-form').val();
+    hairstyleId = styleAndColourID.slice(0, 5);
+    eyesId = $('input[name=Eye-Colour]:checked', '#character-creation-form').val().toLowerCase();
+    skinToneId = $('input[name=skin-tone]:checked', '#character-creation-form').val().toLowerCase();
+    costumeId = $('input[name=costume]:checked', '#character-creation-form').val().toLowerCase();
+    maskId = $('input[name=mask]:checked', '#character-creation-form').val().toLowerCase();
+    capeId = $('input[name=cape]:checked', '#character-creation-form').val().toLowerCase();
+    specialId = $('input[name=special]:checked', '#character-creation-form').val().toLowerCase();
   };
 
   /*
@@ -193,21 +209,69 @@ window.Webflow.push(() => {
     formStep = 3;
   });
 
+  // Form Step 4 Button
+  $('#step-4-button').click(function (e) {
+    e.preventDefault();
+    form.setFormStep('#step-4-button');
+    $('.form-step-4-container').fadeIn('slow');
+    $('.form-step-' + formStep + '-container').css({
+      display: 'none',
+    });
+    $('<style>[type=radio]:checked + img { outline: 5px solid #FCD100;}</style>').appendTo('head');
+    formStep = 4;
+  });
+
+  // Form Step 5 Button
+  $('#step-5-button').click(function (e) {
+    e.preventDefault();
+    form.setFormStep('#step-5-button');
+    $('.form-step-5-container').fadeIn('slow');
+    $('.form-step-' + formStep + '-container').css({
+      display: 'none',
+    });
+    $('<style>[type=radio]:checked + img { outline: 5px solid #E84E10;}</style>').appendTo('head');
+    formStep = 5;
+  });
+
+  // Form Step 6 Button
+  $('#step-6-button').click(function (e) {
+    e.preventDefault();
+    form.setFormStep('#step-6-button');
+    $('.form-step-6-container').fadeIn('slow');
+    $('.form-step-' + formStep + '-container').css({
+      display: 'none',
+    });
+    $('<style>[type=radio]:checked + img { outline: 5px solid #01A187;}</style>').appendTo('head');
+    formStep = 6;
+  });
+
+  // Form Step 7 Button
+  $('#step-7-button').click(function (e) {
+    e.preventDefault();
+    form.setFormStep('#step-7-button');
+    $('.form-step-7-container').fadeIn('slow');
+    $('.form-step-' + formStep + '-container').css({
+      display: 'none',
+    });
+    $('<style>[type=radio]:checked + img { outline: 5px solid #E30613;}</style>').appendTo('head');
+    formStep = 7;
+  });
+
   /*
    * Step 1 Functions
    */
 
   /* On colour change, select the relevant hairstyle and colour */
   $('input[name="hair-colour"]').change(function (e) {
-    hair.displaySelectedColour();
-    hair.checkSelectedHairstyle();
-    hair.updateStyleColourId();
+    form.displaySelectedColour();
+    form.checkSelectedHairstyle();
+    form.updateStyleColourId();
     character.renderCharacterPreview();
   });
 
   $('input[name=hair-style]').change(function (e) {
     getSelectedStyles();
-    hair.updateStyleColourId();
+    form.updateStyleColourId();
     character.renderCharacterPreview();
   });
 
@@ -221,13 +285,25 @@ window.Webflow.push(() => {
     character.renderCharacterPreview();
   });
 
-  // Gets the ID of the selected hairstyle, e.g. hs001
-  window.getSelectedStyles = function getSelectedStyles() {
-    const styleAndColourID = $('input[name=hair-style]:checked', '#character-creation-form').val();
-    hairstyleId = styleAndColourID.slice(0, 5);
-    eyesId = $('input[name=Eye-Colour]:checked', '#character-creation-form').val().toLowerCase();
-    skinToneId = $('input[name=skin-tone]:checked', '#character-creation-form').val().toLowerCase();
-  };
+  $('input[name=costume]').change(function (e) {
+    costumeId = $('input[name=costume]:checked', '#character-creation-form').val().toLowerCase();
+    character.renderCharacterPreview();
+  });
+
+  $('input[name=mask]').change(function (e) {
+    maskId = $('input[name=mask]:checked', '#character-creation-form').val().toLowerCase();
+    character.renderCharacterPreview();
+  });
+
+  $('input[name=cape]').change(function (e) {
+    capeId = $('input[name=cape]:checked', '#character-creation-form').val().toLowerCase();
+    character.renderCharacterPreview();
+  });
+
+  $('input[name=special]').change(function (e) {
+    specialId = $('input[name=special]:checked', '#character-creation-form').val().toLowerCase();
+    character.renderCharacterPreview();
+  });
 
   /*
    *	Pick a Book
@@ -242,20 +318,6 @@ window.Webflow.push(() => {
     $('.character-builder-container').hide();
     $('.book-selector-container').show();
   });
-
-  // const divs = document.querySelectorAll('.pick-a-book');
-
-  // divs.forEach((el) =>
-  //   el.addEventListener('touchend', (e) => {
-  //     e.preventDefault();
-  //     // this now doesn't work - need to lookup character
-  //     let currentCharacterId = sessionStorage.getItem('currentCharacterId');
-  //     sessionStorage.setItem('currentCharacterName', $('#hero-name-input').val());
-  //     currentCharacterId === null ? airtable.addCharacter() : airtable.updateCharacter();
-  //     $('.character-builder-container').hide();
-  //     $('.book-selector-container').show();
-  //   })
-  // );
 
   $('.edit-character-button').click(function (e) {
     e.preventDefault();
@@ -276,7 +338,6 @@ window.Webflow.push(() => {
 
     $('.book-small-list-container').hide();
     $('.book-container-large').each(function () {
-      console.log(selectedBook);
       const expectedId = 'large-' + selectedBook;
       $(this).attr('id') === expectedId ? $(this).css('display', 'flex') : $(this).hide();
     });
