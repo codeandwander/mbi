@@ -1,7 +1,6 @@
 import * as airtable from '../src/airtable.js';
 import * as character from '../src/character.js';
 import * as form from '../src/form.js';
-import * as hair from '../src/hair.js';
 import * as loading from '../src/loading.js';
 import * as localStorage from '../src/localStorage.js';
 import * as navigation from '../src/navigation.js';
@@ -20,6 +19,9 @@ window.Webflow.push(() => {
   window.maskId = '';
   window.capeId = '';
   window.specialId = '';
+  window.sidekickId = '';
+  window.sidekickColour = '';
+  window.sidekickColourId = sidekickId + '-' + sidekickColour;
   window.userId = '';
   window.sessionId = '';
   window.sessionRow = '';
@@ -97,6 +99,7 @@ window.Webflow.push(() => {
   // Gets the ID of the selected hairstyle, e.g. hs001
   window.getSelectedStyles = function getSelectedStyles() {
     const styleAndColourID = $('input[name=hair-style]:checked', '#character-creation-form').val();
+    const sidekickAndColourId = $('input[name=sidekick]:checked', '#character-creation-form').val();
     hairstyleId = styleAndColourID.slice(0, 5);
     eyesId = $('input[name=Eye-Colour]:checked', '#character-creation-form').val().toLowerCase();
     skinToneId = $('input[name=skin-tone]:checked', '#character-creation-form').val().toLowerCase();
@@ -104,6 +107,7 @@ window.Webflow.push(() => {
     maskId = $('input[name=mask]:checked', '#character-creation-form').val().toLowerCase();
     capeId = $('input[name=cape]:checked', '#character-creation-form').val().toLowerCase();
     specialId = $('input[name=special]:checked', '#character-creation-form').val().toLowerCase();
+    sidekickId = $('input[name=sidekick]:checked', '#character-creation-form').val();
   };
 
   /*
@@ -172,93 +176,63 @@ window.Webflow.push(() => {
    */
 
   // Form Step 1 Button
-  $('#step-1-button').click(function (e) {
+  function goToFormStep(step, e) {
     e.preventDefault();
-    form.setFormStep('#step-1-button');
-    $('.form-step-1-container').fadeIn('slow');
-    $('.form-step-' + formStep + '-container').css({
+    let hexColour;
+
+    // Set outline colour of step
+    switch (step) {
+      case '1':
+        hexColour = '#F080B2';
+        break;
+      case '2':
+        hexColour = '#01AFDA';
+        break;
+      case '3':
+        hexColour = '#77B82A';
+        break;
+      case '4':
+        hexColour = '#FCD100';
+        break;
+      case '5':
+        hexColour = '#E84E10';
+        break;
+      case '6':
+        hexColour = '#01A187';
+        break;
+      case '7':
+        hexColour = '#E30613';
+        break;
+      case '8':
+        hexColour = '#E30F6B';
+        break;
+      case '9':
+        hexColour = '#0072BB';
+        break;
+      case '10':
+        hexColour = '#C9B5D8';
+        break;
+    }
+
+    form.setFormStep(`#step-${step}-button`);
+    $(`.form-step-${step}-container`).fadeIn('slow');
+    $(`.form-step-${formStep}-container`).css({
       display: 'none',
     });
     // sets outline colour to the background of the step button
-    $('<style>[type=radio]:checked + img { outline: 5px solid #F080B2;}</style>').appendTo('head');
-    formStep = 1;
-  });
+    $(`<style>[type=radio]:checked + img { outline: 5px solid ${hexColour};}</style>`).appendTo(
+      'head'
+    );
+    formStep = step;
+  }
+  $('.step-button').click(function (e) {
+    const clickedStep = $(this).attr('id').match(/(\d+)/)[0];
 
-  // Form Step 2 Button
-  $('#step-2-button').click(function (e) {
-    e.preventDefault();
-    form.setFormStep('#step-2-button');
-    $('.form-step-2-container').fadeIn('slow');
-    $('.form-step-' + formStep + '-container').css({
-      display: 'none',
-    });
-    // sets outline colour to the background of the step button
-    $('<style>[type=radio]:checked + img { outline: 5px solid #01AFDA;}</style>').appendTo('head');
-    formStep = 2;
-  });
-
-  // Form Step 3 Button
-  $('#step-3-button').click(function (e) {
-    e.preventDefault();
-    form.setFormStep('#step-3-button');
-    $('.form-step-3-container').fadeIn('slow');
-    $('.form-step-' + formStep + '-container').css({
-      display: 'none',
-    });
-    $('<style>[type=radio]:checked + img { outline: 5px solid #77B82A;}</style>').appendTo('head');
-    formStep = 3;
-  });
-
-  // Form Step 4 Button
-  $('#step-4-button').click(function (e) {
-    e.preventDefault();
-    form.setFormStep('#step-4-button');
-    $('.form-step-4-container').fadeIn('slow');
-    $('.form-step-' + formStep + '-container').css({
-      display: 'none',
-    });
-    $('<style>[type=radio]:checked + img { outline: 5px solid #FCD100;}</style>').appendTo('head');
-    formStep = 4;
-  });
-
-  // Form Step 5 Button
-  $('#step-5-button').click(function (e) {
-    e.preventDefault();
-    form.setFormStep('#step-5-button');
-    $('.form-step-5-container').fadeIn('slow');
-    $('.form-step-' + formStep + '-container').css({
-      display: 'none',
-    });
-    $('<style>[type=radio]:checked + img { outline: 5px solid #E84E10;}</style>').appendTo('head');
-    formStep = 5;
-  });
-
-  // Form Step 6 Button
-  $('#step-6-button').click(function (e) {
-    e.preventDefault();
-    form.setFormStep('#step-6-button');
-    $('.form-step-6-container').fadeIn('slow');
-    $('.form-step-' + formStep + '-container').css({
-      display: 'none',
-    });
-    $('<style>[type=radio]:checked + img { outline: 5px solid #01A187;}</style>').appendTo('head');
-    formStep = 6;
-  });
-
-  // Form Step 7 Button
-  $('#step-7-button').click(function (e) {
-    e.preventDefault();
-    form.setFormStep('#step-7-button');
-    $('.form-step-7-container').fadeIn('slow');
-    $('.form-step-' + formStep + '-container').css({
-      display: 'none',
-    });
-    $('<style>[type=radio]:checked + img { outline: 5px solid #E30613;}</style>').appendTo('head');
-    formStep = 7;
+    goToFormStep(clickedStep, e);
   });
 
   /*
-   * Step 1 Functions
+   * On Change Functions
    */
 
   /* On colour change, select the relevant hairstyle and colour */
@@ -302,6 +276,19 @@ window.Webflow.push(() => {
 
   $('input[name=special]').change(function (e) {
     specialId = $('input[name=special]:checked', '#character-creation-form').val().toLowerCase();
+    character.renderCharacterPreview();
+  });
+
+  $('input[name="sidekick-colour"]').change(function (e) {
+    form.displaySelectedColour();
+    form.checkSelectedHairstyle();
+    form.updateStyleColourId();
+    character.renderCharacterPreview();
+  });
+
+  $('input[name=sidekick]').change(function (e) {
+    getSelectedStyles();
+    form.updateStyleColourId();
     character.renderCharacterPreview();
   });
 

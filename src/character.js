@@ -39,6 +39,7 @@ export function configureCharacter(fields) {
   sessionStorage.setItem('currentCharacterId', fields['RECORD_ID']);
 
   const splitStyleColour = fields['HAIR'].split('-');
+  const splitSidekickColour = fields['SIDEKICK'].split('-');
 
   $('input[value=' + splitStyleColour[1] + ']').prop('checked', true);
   $('input[value=' + fields['HAIR'] + ']').prop('checked', true);
@@ -48,6 +49,8 @@ export function configureCharacter(fields) {
   $('input[value=' + fields['MASK'] + ']').prop('checked', true);
   $('input[value=' + fields['CAPE'] + ']').prop('checked', true);
   $('input[value=' + fields['SPECIAL'] + ']').prop('checked', true);
+  $('input[value=' + fields['SIDEKICK'] + ']').prop('checked', true);
+  $('input[value=sk-' + splitSidekickColour[1] + ']').prop('checked', true);
   $('#hero-name-input').val(fields['NAME']);
 
   window.getSelectedStyles();
