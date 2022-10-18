@@ -84,7 +84,7 @@ window.Webflow.push(() => {
     if (sessionStorage.getItem('currentCharacterId') === null && !userSignedIn) {
       character.randomiseCharacter();
       window.getSelectedStyles();
-      form.displaySelectedColour();
+      form.displaySelectedColours();
       form.checkSelectedHairstyle(function () {
         pagination.buildPage();
       });
@@ -107,7 +107,7 @@ window.Webflow.push(() => {
     maskId = $('input[name=mask]:checked', '#character-creation-form').val().toLowerCase();
     capeId = $('input[name=cape]:checked', '#character-creation-form').val().toLowerCase();
     specialId = $('input[name=special]:checked', '#character-creation-form').val().toLowerCase();
-    sidekickId = $('input[name=sidekick]:checked', '#character-creation-form').val();
+    sidekickId = sidekickAndColourId.slice(0, 5);
   };
 
   /*
@@ -237,15 +237,15 @@ window.Webflow.push(() => {
 
   /* On colour change, select the relevant hairstyle and colour */
   $('input[name="hair-colour"]').change(function (e) {
-    form.displaySelectedColour();
+    form.displaySelectedColours();
     form.checkSelectedHairstyle();
-    form.updateStyleColourId();
+    form.updateStyleColourIds();
     character.renderCharacterPreview();
   });
 
   $('input[name=hair-style]').change(function (e) {
     getSelectedStyles();
-    form.updateStyleColourId();
+    form.updateStyleColourIds();
     character.renderCharacterPreview();
   });
 
@@ -280,15 +280,15 @@ window.Webflow.push(() => {
   });
 
   $('input[name="sidekick-colour"]').change(function (e) {
-    form.displaySelectedColour();
+    form.displaySelectedColours();
     form.checkSelectedHairstyle();
-    form.updateStyleColourId();
+    form.updateStyleColourIds();
     character.renderCharacterPreview();
   });
 
   $('input[name=sidekick]').change(function (e) {
     getSelectedStyles();
-    form.updateStyleColourId();
+    form.updateStyleColourIds();
     character.renderCharacterPreview();
   });
 

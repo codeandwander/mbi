@@ -1,5 +1,5 @@
 // // Displays the hair styles for the selected colour
-// export function displaySelectedColour() {
+// export function displaySelectedColours() {
 //   hairColour = $('input[name=hair-colour]:checked', '#character-creation-form').val().toLowerCase();
 //   // $('input[name=hair-style]').each(function (index) {
 //   //   const elementColour = $(this).val().substring(6).toLowerCase();
@@ -20,13 +20,13 @@
 // }
 
 // // Updates the global variable for hair style and colour
-// export function updateStyleColourId() {
+// export function updateStyleColourIds() {
 //   styleColourId = hairstyleId + '-' + hairColour.toLowerCase();
 // }
 
 // // Checks the selected hairstyle
 // export function checkSelectedHairstyle(callback) {
-//   updateStyleColourId();
+//   updateStyleColourIds();
 //   $('input[value="' + styleColourId + '"]').prop('checked', true);
 
 //   callback && callback();

@@ -57,35 +57,36 @@ export function appendCharacterDropdownItems() {
 }
 
 // Displays the hair styles for the selected colour
-export function displaySelectedColour() {
+export function displaySelectedColours() {
   hairColour = $('input[name=hair-colour]:checked', '#character-creation-form').val().toLowerCase();
   sidekickColour = $('input[name=sidekick-colour]:checked', '#character-creation-form')
     .val()
     .toLowerCase();
+
+  sidekickColour = sidekickColour.substr(3);
+
+  console.log(sidekickColour);
 
   $('.hair-collection-wrapper').each(function () {
     $(this).attr('class').includes(hairColour) ? $(this).show() : $(this).hide();
   });
 
   $('.sidekick-container :input').each(function () {
-    $(this).val().includes(sidekickColour.substr(3))
+    $(this).val().includes(sidekickColour)
       ? $(this).closest('.sidekick-container').show()
       : $(this).closest('.sidekick-container').show().hide();
   });
 }
 
 // Updates the global variable for hair style and colour
-export function updateStyleColourId() {
+export function updateStyleColourIds() {
   styleColourId = hairstyleId + '-' + hairColour.toLowerCase();
-}
-
-export function updateSidekickColourId() {
   sidekickColourId = sidekickId + '-' + sidekickColour.toLowerCase();
 }
 
 // Checks the selected hairstyle
 export function checkSelectedHairstyle(callback) {
-  updateStyleColourId();
+  updateStyleColourIds();
   $('input[value="' + styleColourId + '"]').prop('checked', true);
 
   callback && callback();

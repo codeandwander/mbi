@@ -54,7 +54,7 @@ export function configureCharacter(fields) {
   $('#hero-name-input').val(fields['NAME']);
 
   window.getSelectedStyles();
-  form.displaySelectedColour();
+  form.displaySelectedColours();
   form.checkSelectedHairstyle(function () {
     pagination.buildPage();
   });
@@ -68,7 +68,7 @@ export function createNewCharacter() {
   $('.name-input').val('');
   randomiseCharacter();
   window.getSelectedStyles();
-  form.displaySelectedColour();
+  form.displaySelectedColours();
   form.checkSelectedHairstyle(function () {
     pagination.buildPage();
   });
@@ -102,9 +102,9 @@ export function renderCharacterPreview(callback) {
     $('.' + styleColourId).show();
   } else {
     // selects random from list
-    const { length } = $('.hair-container img');
+    const { length } = $('.hair').length;
     const random = Math.floor(Math.random() * length);
-    $('.hair-container img').eq(random).show();
+    $('.hair').eq(random).show();
   }
 
   // Eyes
@@ -112,9 +112,9 @@ export function renderCharacterPreview(callback) {
     $('.eyes:visible').first().hide();
     $('.' + eyesId).show();
   } else {
-    const { length } = $('.eyes-container img');
+    const { length } = $('.eyes').length;
     const random = Math.floor(Math.random() * length);
-    $('.eyes-container img').eq(random).show();
+    $('.eyes').eq(random).show();
   }
 
   // Skin
@@ -122,9 +122,9 @@ export function renderCharacterPreview(callback) {
     $('.skintone:visible').first().hide();
     $('.' + skinToneId).show();
   } else {
-    const { length } = $('.skin-container img');
+    const { length } = $('.skintone').length;
     const random = Math.floor(Math.random() * length);
-    $('.skin-container img').eq(random).show();
+    $('.skintone').eq(random).show();
   }
 
   // Costume
@@ -132,9 +132,9 @@ export function renderCharacterPreview(callback) {
     $('.costume:visible').first().hide();
     $('.' + costumeId).show();
   } else {
-    const { length } = $('.costume-container img');
+    const { length } = $('.costume').length;
     const random = Math.floor(Math.random() * length);
-    $('.costume-container img').eq(random).show();
+    $('.costume').eq(random).show();
   }
 
   // Mask
@@ -142,9 +142,9 @@ export function renderCharacterPreview(callback) {
     $('.mask:visible').first().hide();
     $('.' + maskId).show();
   } else {
-    const { length } = $('.mask-container img');
+    const { length } = $('.mask').length;
     const random = Math.floor(Math.random() * length);
-    $('.mask-container img').eq(random).show();
+    $('.mask').eq(random).show();
   }
 
   // Cape
@@ -152,9 +152,9 @@ export function renderCharacterPreview(callback) {
     $('.cape:visible').first().hide();
     $('.' + capeId).show();
   } else {
-    const { length } = $('.cape-container img');
+    const { length } = $('.cape').length;
     const random = Math.floor(Math.random() * length);
-    $('.cape-container img').eq(random).show();
+    $('.cape').eq(random).show();
   }
 
   // Special
@@ -162,9 +162,19 @@ export function renderCharacterPreview(callback) {
     $('.special:visible').first().hide();
     $('.' + specialId).show();
   } else {
-    const { length } = $('.special-container img');
+    const { length } = $('.special').length();
     const random = Math.floor(Math.random() * length);
-    $('.special-container img').eq(random).show();
+    $('.special').eq(random).show();
+  }
+
+  console.log(sidekickColourId);
+  if (sidekickColourId) {
+    $('.sidekick:visible').first().hide();
+    $('.' + sidekickColourId).show();
+  } else {
+    const { length } = $('.sidekick').length;
+    const random = Math.floor(Math.random() * length);
+    $('.sidekick').eq(random).show();
   }
 
   callback && callback();
@@ -177,9 +187,21 @@ export function randomiseCharacter() {
   const randomHairStyle = form.getRandomIndex('input[name="hair-style"]');
   const randomEyeColour = form.getRandomIndex('input[name="Eye-Colour"]');
   const randomSkinTone = form.getRandomIndex('input[name="skin-tone"]');
+  const randomCostume = form.getRandomIndex('input[name="costume"]');
+  const randomMask = form.getRandomIndex('input[name="mask"]');
+  const randomCape = form.getRandomIndex('input[name="cape"]');
+  const randomSpecial = form.getRandomIndex('input[name="special"]');
+  const randomSidekickColour = form.getRandomIndex('input[name="sidekick-colour"]');
+  const randomSidekick = form.getRandomIndex('input[name="sidekick"]');
 
   $('input[name="hair-colour"]').eq(randomHairColour).prop('checked', true);
   $('input[name="hair-style"]').eq(randomHairStyle).prop('checked', true);
   $('input[name="Eye-Colour"]').eq(randomEyeColour).prop('checked', true);
   $('input[name="skin-tone"]').eq(randomSkinTone).prop('checked', true);
+  $('input[name="costume"]').eq(randomCostume).prop('checked', true);
+  $('input[name="mask"]').eq(randomMask).prop('checked', true);
+  $('input[name="cape"]').eq(randomCape).prop('checked', true);
+  $('input[name="special"]').eq(randomSpecial).prop('checked', true);
+  $('input[name="sidekick-colour"]').eq(randomSidekickColour).prop('checked', true);
+  $('input[name="sidekick"]').eq(randomSidekick).prop('checked', true);
 }
