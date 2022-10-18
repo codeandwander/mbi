@@ -46,40 +46,41 @@ export function setInputValues() {
 
 // Set classes for character assets
 export function setCharacterPreviewClasses() {
-  $('.character-preview-hair-item').each(function () {
-    const hairLabel = $(this).find('.character-hair-label').text();
-    $(this).find('.hair').addClass(hairLabel);
+  $('.character-item').each(function () {
+    const itemLabel = $(this).find('.character-item-preview-label').text();
+    const itemCategory = $(this).find('.character-item-category').text().toLowerCase();
+    $(this).find('.character-item-preview-image').addClass(itemLabel).addClass(itemCategory);
   });
 
-  $('.character-preview-eye-item').each(function () {
-    const eyeLabel = $(this).find('.character-eye-label').text();
-    $(this).find('.eyes').addClass(eyeLabel);
-  });
+  // $('.character-preview-eye-item').each(function () {
+  //   const eyeLabel = $(this).find('.character-eye-label').text();
+  //   $(this).find('.eyes').addClass(eyeLabel);
+  // });
 
-  $('.character-preview-skin-item').each(function () {
-    const skinLabel = $(this).find('.character-skin-label').text();
-    $(this).find('.skin').addClass(skinLabel);
-  });
+  // $('.character-preview-skin-item').each(function () {
+  //   const skinLabel = $(this).find('.character-skin-label').text();
+  //   $(this).find('.skin').addClass(skinLabel);
+  // });
 
-  $('.character-preview-costume-item').each(function () {
-    const costumeLabel = $(this).find('.character-costume-label').text();
-    $(this).find('.costume').addClass(costumeLabel);
-  });
+  // $('.character-preview-costume-item').each(function () {
+  //   const costumeLabel = $(this).find('.character-costume-label').text();
+  //   $(this).find('.costume').addClass(costumeLabel);
+  // });
 
-  $('.character-preview-mask-item').each(function () {
-    const maskLabel = $(this).find('.character-mask-label').text();
-    $(this).find('.mask').addClass(maskLabel);
-  });
+  // $('.character-preview-mask-item').each(function () {
+  //   const maskLabel = $(this).find('.character-mask-label').text();
+  //   $(this).find('.mask').addClass(maskLabel);
+  // });
 
-  $('.character-preview-cape-item').each(function () {
-    const capeLabel = $(this).find('.character-cape-label').text();
-    $(this).find('.cape').addClass(capeLabel);
-  });
+  // $('.character-preview-cape-item').each(function () {
+  //   const capeLabel = $(this).find('.character-cape-label').text();
+  //   $(this).find('.cape').addClass(capeLabel);
+  // });
 
-  $('.character-preview-special-item').each(function () {
-    const specialLabel = $(this).find('.character-special-label').text();
-    $(this).find('.special').addClass(specialLabel);
-  });
+  // $('.character-preview-special-item').each(function () {
+  //   const specialLabel = $(this).find('.character-special-label').text();
+  //   $(this).find('.special').addClass(specialLabel);
+  // });
 }
 
 export function displayBookControls() {

@@ -116,7 +116,7 @@ export function renderCharacterPreview(callback) {
 
   // Skin
   if (skinToneId) {
-    $('.skin:visible').first().hide();
+    $('.skintone:visible').first().hide();
     $('.' + skinToneId).show();
   } else {
     const { length } = $('.skin-container img');
