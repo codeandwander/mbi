@@ -7,7 +7,8 @@ export function navigateToCharacterSelection() {
 
 export function navigateToBookSelection() {
   $('.book-preview-container').hide();
-  $('.book-selector-container').hide();
+  $('.book-selector-container').show();
+  $('.book-small-list-container').show();
   $('.book-container-large').hide();
-  $('.character-builder-container').show();
+  $('.character-builder-container').hide();
 }

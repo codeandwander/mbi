@@ -23,6 +23,8 @@ export function buildUserCharacter() {
           a.fields.MODIFIED_AT > b.fields.MODIFIED_AT ? a : b
         );
         configureCharacter(latestCharacter['fields']);
+      } else {
+        randomiseCharacter();
       }
     });
   } else {
@@ -53,6 +55,10 @@ export function configureCharacter(fields) {
   $('input[value=sk-' + splitSidekickColour[1] + ']').prop('checked', true);
   $('#hero-name-input').val(fields['NAME']);
 
+  configureInputs();
+}
+
+function configureInputs() {
   window.getSelectedStyles();
   form.displaySelectedColours();
   form.checkSelectedHairstyle(function () {
@@ -67,12 +73,6 @@ export function configureCharacter(fields) {
 export function createNewCharacter() {
   $('.name-input').val('');
   randomiseCharacter();
-  window.getSelectedStyles();
-  form.displaySelectedColours();
-  form.checkSelectedHairstyle(function () {
-    pagination.buildPage();
-  });
-  renderCharacterPreview();
   airtable.addCharacter();
 }
 
@@ -92,6 +92,35 @@ export function saveCharacter() {
     $('.alert-banner').innerHtml('blallals');
     // display error banner
   }
+}
+
+// Randomise character
+export function randomiseCharacter() {
+  $('.name-input').val('');
+  const randomHairColour = form.getRandomIndex('input[name="hair-colour"]');
+  const randomHairStyle = form.getRandomIndex('input[name="hair-style"]');
+  const randomEyeColour = form.getRandomIndex('input[name="Eye-Colour"]');
+  const randomSkinTone = form.getRandomIndex('input[name="skin-tone"]');
+  const randomCostume = form.getRandomIndex('input[name="costume"]');
+  const randomMask = form.getRandomIndex('input[name="mask"]');
+  const randomCape = form.getRandomIndex('input[name="cape"]');
+  const randomSpecial = form.getRandomIndex('input[name="special"]');
+  const randomSidekickColour = form.getRandomIndex('input[name="sidekick-colour"]');
+  const randomSidekick = form.getRandomIndex('input[name="sidekick"]');
+
+  $('input[name="hair-colour"]').eq(randomHairColour).prop('checked', true);
+  $('input[name="hair-style"]').eq(randomHairStyle).prop('checked', true);
+  $('input[name="Eye-Colour"]').eq(randomEyeColour).prop('checked', true);
+  $('input[name="skin-tone"]').eq(randomSkinTone).prop('checked', true);
+  $('input[name="costume"]').eq(randomCostume).prop('checked', true);
+  $('input[name="mask"]').eq(randomMask).prop('checked', true);
+  $('input[name="cape"]').eq(randomCape).prop('checked', true);
+  $('input[name="special"]').eq(randomSpecial).prop('checked', true);
+  $('input[name="sidekick-colour"]').eq(randomSidekickColour).prop('checked', true);
+  $('input[name="sidekick"]').eq(randomSidekick).prop('checked', true);
+
+  sessionStorage.clear();
+  configureInputs();
 }
 
 // Render the character preview
@@ -130,7 +159,9 @@ export function renderCharacterPreview(callback) {
   // Costume
   if (costumeId) {
     $('.costume:visible').first().hide();
+    $('.sidekick-costume:visible').first().hide();
     $('.' + costumeId).show();
+    $(`.${sidekickId}-${costumeId}`).show();
   } else {
     const { length } = $('.costume').length;
     const random = Math.floor(Math.random() * length);
@@ -140,7 +171,9 @@ export function renderCharacterPreview(callback) {
   // Mask
   if (maskId) {
     $('.mask:visible').first().hide();
+    $('.sidekick-mask:visible').first().hide();
     $('.' + maskId).show();
+    $(`.${sidekickId}-${maskId}`).show();
   } else {
     const { length } = $('.mask').length;
     const random = Math.floor(Math.random() * length);
@@ -150,7 +183,9 @@ export function renderCharacterPreview(callback) {
   // Cape
   if (capeId) {
     $('.cape:visible').first().hide();
+    $('.sidekick-cape:visible').first().hide();
     $('.' + capeId).show();
+    $(`.${sidekickId}-${capeId}`).show();
   } else {
     const { length } = $('.cape').length;
     const random = Math.floor(Math.random() * length);
@@ -167,7 +202,6 @@ export function renderCharacterPreview(callback) {
     $('.special').eq(random).show();
   }
 
-  console.log(sidekickColourId);
   if (sidekickColourId) {
     $('.sidekick:visible').first().hide();
     $('.' + sidekickColourId).show();
@@ -177,31 +211,14 @@ export function renderCharacterPreview(callback) {
     $('.sidekick').eq(random).show();
   }
 
+  if (coverId) {
+    $('.cover:visible').first().hide();
+    $('.' + coverId).show();
+  } else {
+    const { length } = $('.cover').length;
+    const random = Math.floor(Math.random() * length);
+    $('.cover').eq(random).show();
+  }
+
   callback && callback();
-}
-
-// Randomise character
-export function randomiseCharacter() {
-  $('.name-input').val('');
-  const randomHairColour = form.getRandomIndex('input[name="hair-colour"]');
-  const randomHairStyle = form.getRandomIndex('input[name="hair-style"]');
-  const randomEyeColour = form.getRandomIndex('input[name="Eye-Colour"]');
-  const randomSkinTone = form.getRandomIndex('input[name="skin-tone"]');
-  const randomCostume = form.getRandomIndex('input[name="costume"]');
-  const randomMask = form.getRandomIndex('input[name="mask"]');
-  const randomCape = form.getRandomIndex('input[name="cape"]');
-  const randomSpecial = form.getRandomIndex('input[name="special"]');
-  const randomSidekickColour = form.getRandomIndex('input[name="sidekick-colour"]');
-  const randomSidekick = form.getRandomIndex('input[name="sidekick"]');
-
-  $('input[name="hair-colour"]').eq(randomHairColour).prop('checked', true);
-  $('input[name="hair-style"]').eq(randomHairStyle).prop('checked', true);
-  $('input[name="Eye-Colour"]').eq(randomEyeColour).prop('checked', true);
-  $('input[name="skin-tone"]').eq(randomSkinTone).prop('checked', true);
-  $('input[name="costume"]').eq(randomCostume).prop('checked', true);
-  $('input[name="mask"]').eq(randomMask).prop('checked', true);
-  $('input[name="cape"]').eq(randomCape).prop('checked', true);
-  $('input[name="special"]').eq(randomSpecial).prop('checked', true);
-  $('input[name="sidekick-colour"]').eq(randomSidekickColour).prop('checked', true);
-  $('input[name="sidekick"]').eq(randomSidekick).prop('checked', true);
 }

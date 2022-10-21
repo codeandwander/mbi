@@ -22,6 +22,7 @@ window.Webflow.push(() => {
   window.sidekickId = '';
   window.sidekickColour = '';
   window.sidekickColourId = sidekickId + '-' + sidekickColour;
+  window.coverId = '';
   window.userId = '';
   window.sessionId = '';
   window.sessionRow = '';
@@ -83,14 +84,6 @@ window.Webflow.push(() => {
     // No character_id in local storage, and user not logged in
     if (sessionStorage.getItem('currentCharacterId') === null && !userSignedIn) {
       character.randomiseCharacter();
-      window.getSelectedStyles();
-      form.displaySelectedColours();
-      form.checkSelectedHairstyle(function () {
-        pagination.buildPage();
-      });
-      character.renderCharacterPreview(function () {
-        loading.displayElements();
-      });
     } else {
       character.buildUserCharacter();
     }
@@ -108,6 +101,7 @@ window.Webflow.push(() => {
     capeId = $('input[name=cape]:checked', '#character-creation-form').val().toLowerCase();
     specialId = $('input[name=special]:checked', '#character-creation-form').val().toLowerCase();
     sidekickId = sidekickAndColourId.slice(0, 5);
+    // coverId = $('input[name=cover]:checked', '#character-creation-form').val().toLowerCase();
   };
 
   /*
@@ -281,7 +275,7 @@ window.Webflow.push(() => {
 
   $('input[name="sidekick-colour"]').change(function (e) {
     form.displaySelectedColours();
-    form.checkSelectedHairstyle();
+    form.checkSelectedSidekick();
     form.updateStyleColourIds();
     character.renderCharacterPreview();
   });
@@ -302,8 +296,7 @@ window.Webflow.push(() => {
     let currentCharacterId = sessionStorage.getItem('currentCharacterId');
     sessionStorage.setItem('currentCharacterName', $('#hero-name-input').val());
     currentCharacterId === null ? airtable.addCharacter() : airtable.updateCharacter();
-    $('.character-builder-container').hide();
-    $('.book-selector-container').show();
+    navigation.navigateToBookSelection();
   });
 
   $('.edit-character-button').click(function (e) {
@@ -352,6 +345,10 @@ window.Webflow.push(() => {
       'data-item-custom1-value',
       window.sessionStorage.getItem('currentCharacterName')
     );
+    $('.add-to-cart-btn').attr(
+      'data-item-custom2-value',
+      window.sessionStorage.getItem('currentCharacterId')
+    );
 
     // post to airtable
     airtable.postToAirTable();
@@ -381,6 +378,14 @@ window.Webflow.push(() => {
 
   $('.add-to-cart-btn').click(function (e) {
     navigation.navigateToCharacterSelection();
-    character.createNewCharacter();
+    character.randomiseCharacter();
+  });
+
+  /*
+   * Navigation Button Links
+   */
+
+  $('#home-button').click(function (e) {
+    navigation.navigateToCharacterSelection();
   });
 });

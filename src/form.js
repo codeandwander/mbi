@@ -91,3 +91,10 @@ export function checkSelectedHairstyle(callback) {
 
   callback && callback();
 }
+
+export function checkSelectedSidekick(callback) {
+  updateStyleColourIds();
+  $('input[value="' + sidekickColourId + '"]').prop('checked', true);
+
+  callback && callback();
+}
