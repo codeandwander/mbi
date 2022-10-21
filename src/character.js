@@ -43,6 +43,7 @@ export function configureCharacter(fields) {
   const splitStyleColour = fields['HAIR'].split('-');
   const splitSidekickColour = fields['SIDEKICK'].split('-');
 
+  // Character Creation
   $('input[value=' + splitStyleColour[1] + ']').prop('checked', true);
   $('input[value=' + fields['HAIR'] + ']').prop('checked', true);
   $('input[value=' + fields['EYES'] + ']').prop('checked', true);
@@ -54,6 +55,10 @@ export function configureCharacter(fields) {
   $('input[value=' + fields['SIDEKICK'] + ']').prop('checked', true);
   $('input[value=sk-' + splitSidekickColour[1] + ']').prop('checked', true);
   $('#hero-name-input').val(fields['NAME']);
+
+  // Pronouns, Dedication and Language
+  $('input[value=' + fields['PRONOUNS'] + ']').prop('checked', true);
+  $('input[value=' + fields['LANGUAGE'] + ']').prop('checked', true);
 
   configureInputs();
 }
@@ -107,6 +112,8 @@ export function randomiseCharacter() {
   const randomSpecial = form.getRandomIndex('input[name="special"]');
   const randomSidekickColour = form.getRandomIndex('input[name="sidekick-colour"]');
   const randomSidekick = form.getRandomIndex('input[name="sidekick"]');
+  const randomPronoun = form.getRandomIndex('input[name="pronoun"]');
+  const randomLanguage = form.getRandomIndex('input[name="language"]');
 
   $('input[name="hair-colour"]').eq(randomHairColour).prop('checked', true);
   $('input[name="hair-style"]').eq(randomHairStyle).prop('checked', true);
@@ -118,6 +125,8 @@ export function randomiseCharacter() {
   $('input[name="special"]').eq(randomSpecial).prop('checked', true);
   $('input[name="sidekick-colour"]').eq(randomSidekickColour).prop('checked', true);
   $('input[name="sidekick"]').eq(randomSidekick).prop('checked', true);
+  $('input[name="pronoun"]').eq(randomPronoun).prop('checked', true);
+  $('input[name="language"]').eq(randomLanguage).prop('checked', true);
 
   sessionStorage.clear();
   configureInputs();

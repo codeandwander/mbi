@@ -30,6 +30,7 @@ window.Webflow.push(() => {
   window.currentCharacterName = '';
   window.pronouns = '';
   window.language = '';
+  window.dedicationMessage = '';
 
   // Responsive Pagination
   $(document).ready(function () {
@@ -101,6 +102,11 @@ window.Webflow.push(() => {
     capeId = $('input[name=cape]:checked', '#character-creation-form').val().toLowerCase();
     specialId = $('input[name=special]:checked', '#character-creation-form').val().toLowerCase();
     sidekickId = sidekickAndColourId.slice(0, 5);
+
+    pronouns = $('input[name=pronoun]:checked').val().toLowerCase();
+    language = $('input[name=language]:checked').val().toLowerCase();
+
+    //language = $('input[name=language]:checked', '#wf-form-language-form').val().toLowerCase();
     // coverId = $('input[name=cover]:checked', '#character-creation-form').val().toLowerCase();
   };
 
@@ -154,18 +160,6 @@ window.Webflow.push(() => {
   });
 
   /*
-   * LANGUAGE AND PRONOUN RADIO BUTTONS
-   */
-
-  $('.pronoun-radio-button').click(function () {
-    window.pronouns = $(this).val();
-  });
-
-  $('.language-radio-button').click(function () {
-    window.language = $(this).val();
-  });
-
-  /*
    * FORM STEP FUNCTIONS
    */
 
@@ -202,9 +196,6 @@ window.Webflow.push(() => {
         break;
       case '9':
         hexColour = '#0072BB';
-        break;
-      case '10':
-        hexColour = '#C9B5D8';
         break;
     }
 
@@ -284,6 +275,18 @@ window.Webflow.push(() => {
     getSelectedStyles();
     form.updateStyleColourIds();
     character.renderCharacterPreview();
+  });
+
+  $('textarea#dedication').change(function () {
+    window.dedicationMessage = $(this).val();
+  });
+
+  $('input[name=pronoun]').change(function () {
+    window.pronouns = $(this).val();
+  });
+
+  $('input[name=language]').change(function () {
+    window.language = $(this).val();
   });
 
   /*

@@ -59,6 +59,7 @@ export function postToAirTable() {
       BOOK_ID: window.selectedBook,
       SESSION_ID: localStorage.getItem('sessionId'),
       USER_EMAIL: snipcart.getUserEmail(),
+      DEDICATION_MESSAGE: window.dedicationMessage,
     },
   ];
   const myHeaders = new Headers();
@@ -92,8 +93,8 @@ export function addCharacter() {
       SPECIAL: specialId,
       SIDEKICK: sidekickColourId,
       COVER_COLOUR: coverId,
-      PRONOUNS: window.pronouns,
-      LANGUAGE: window.language,
+      PRONOUNS: pronouns,
+      LANGUAGE: language,
     },
   ];
   const myHeaders = new Headers();
@@ -137,8 +138,8 @@ export function updateCharacter() {
         SPECIAL: specialId,
         SIDEKICK: sidekickColourId,
         COVER_COLOUR: coverId,
-        PRONOUNS: window.pronouns,
-        LANGUAGE: window.language,
+        PRONOUNS: pronouns,
+        LANGUAGE: language,
       },
     },
   ];
