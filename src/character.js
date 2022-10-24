@@ -54,6 +54,7 @@ export function configureCharacter(fields) {
   $('input[value=' + fields['SPECIAL'] + ']').prop('checked', true);
   $('input[value=' + fields['SIDEKICK'] + ']').prop('checked', true);
   $('input[value=sk-' + splitSidekickColour[1] + ']').prop('checked', true);
+  $('input[value=' + fields['COVER_COLOUR'] + ']').prop('checked', true);
   $('#hero-name-input').val(fields['NAME']);
 
   // Pronouns, Dedication and Language
@@ -112,6 +113,7 @@ export function randomiseCharacter() {
   const randomSpecial = form.getRandomIndex('input[name="special"]');
   const randomSidekickColour = form.getRandomIndex('input[name="sidekick-colour"]');
   const randomSidekick = form.getRandomIndex('input[name="sidekick"]');
+  const randomCover = form.getRandomIndex('input[name="cover"]');
   const randomPronoun = form.getRandomIndex('input[name="pronoun"]');
   const randomLanguage = form.getRandomIndex('input[name="language"]');
 
@@ -125,6 +127,7 @@ export function randomiseCharacter() {
   $('input[name="special"]').eq(randomSpecial).prop('checked', true);
   $('input[name="sidekick-colour"]').eq(randomSidekickColour).prop('checked', true);
   $('input[name="sidekick"]').eq(randomSidekick).prop('checked', true);
+  $('input[name="cover"]').eq(randomCover).prop('checked', true);
   $('input[name="pronoun"]').eq(randomPronoun).prop('checked', true);
   $('input[name="language"]').eq(randomLanguage).prop('checked', true);
 

@@ -102,12 +102,10 @@ window.Webflow.push(() => {
     capeId = $('input[name=cape]:checked', '#character-creation-form').val().toLowerCase();
     specialId = $('input[name=special]:checked', '#character-creation-form').val().toLowerCase();
     sidekickId = sidekickAndColourId.slice(0, 5);
+    coverId = $('input[name=cover]:checked', '#character-creation-form').val().toLowerCase();
 
     pronouns = $('input[name=pronoun]:checked').val().toLowerCase();
     language = $('input[name=language]:checked').val().toLowerCase();
-
-    //language = $('input[name=language]:checked', '#wf-form-language-form').val().toLowerCase();
-    // coverId = $('input[name=cover]:checked', '#character-creation-form').val().toLowerCase();
   };
 
   /*
@@ -274,6 +272,11 @@ window.Webflow.push(() => {
   $('input[name=sidekick]').change(function (e) {
     getSelectedStyles();
     form.updateStyleColourIds();
+    character.renderCharacterPreview();
+  });
+
+  $('input[name=cover]').change(function (e) {
+    coverId = $('input[name=cover]:checked', '#character-creation-form').val().toLowerCase();
     character.renderCharacterPreview();
   });
 
