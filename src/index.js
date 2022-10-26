@@ -1,4 +1,5 @@
 import * as airtable from '../src/airtable.js';
+import * as alerts from '../src/alerts.js';
 import * as character from '../src/character.js';
 import * as form from '../src/form.js';
 import * as loading from '../src/loading.js';
@@ -68,8 +69,10 @@ window.Webflow.push(() => {
 
   // Block is executed on page load - sets up the data etc.
   window.onload = function () {
+    console.log('window.onload completed');
     // this might be causing page to not always load
     Snipcart.events.on('snipcart.initialized', (snipcartState) => {
+      console.log('snipcart initialised');
       navigation.navigateToCharacterSelection();
       snipcart.toggleUiElements();
       form.setFormStep('#step-1-button');
@@ -80,13 +83,21 @@ window.Webflow.push(() => {
   };
 
   window.randomiseOrLoadCharacter = function () {
+    console.log('randomiseOrLoadCharacter');
     const userSignedIn = Snipcart.store.getState().customer.status === 'SignedIn';
 
     // No character_id in local storage, and user not logged in
-    if (sessionStorage.getItem('currentCharacterId') === null && !userSignedIn) {
-      character.randomiseCharacter();
-    } else {
-      character.buildUserCharacter();
+    //potentially need another option here to save and unsaved character upon signin.
+    // maybe only if they've filled out the name?
+
+    // if name already filled out, we can assume they are already building a character
+    // prior to sign in, so we don't load or randomise.
+    if (!$('input[name="fname"]').val()) {
+      if (sessionStorage.getItem('currentCharacterId') === null && !userSignedIn) {
+        character.randomiseCharacter();
+      } else {
+        character.buildUserCharacter();
+      }
     }
   };
 
@@ -298,11 +309,21 @@ window.Webflow.push(() => {
 
   $('.pick-a-book').click(function (e) {
     e.preventDefault();
-    // this now doesn't work - need to lookup character
-    let currentCharacterId = sessionStorage.getItem('currentCharacterId');
-    sessionStorage.setItem('currentCharacterName', $('#hero-name-input').val());
-    currentCharacterId === null ? airtable.addCharacter() : airtable.updateCharacter();
-    navigation.navigateToBookSelection();
+    // validate firstname input is populated
+    if (!$('input[name=fname]').val()) {
+      alerts.displayAlert('error', 'Please enter a character name before continuing.');
+    } else {
+      let currentCharacterId = sessionStorage.getItem('currentCharacterId');
+      sessionStorage.setItem('currentCharacterName', $('#hero-name-input').val());
+      currentCharacterId === null
+        ? airtable.addCharacter(
+            alerts.displayAlert('success', `${$('#hero-name-input').val()} was saved successfully!`)
+          )
+        : airtable.updateCharacter(
+            alerts.displayAlert('success', `${$('#hero-name-input').val()} was saved successfully!`)
+          );
+      navigation.navigateToBookSelection();
+    }
   });
 
   $('.edit-character-button').click(function (e) {
@@ -347,6 +368,24 @@ window.Webflow.push(() => {
     e.preventDefault();
     localStorage.setSessionId();
     form.displayBookControls();
+
+    // create character object
+    let currentCharacterObject = {
+      characterName: window.sessionStorage.getItem('currentCharacterName'),
+      hairstyleId: window.styleColourId,
+      eyesId: window.eyesId,
+      skintoneId: window.skinToneId,
+      costumeId: window.costumeId,
+      maskId: window.maskId,
+      capeId: window.capeId,
+      specialId: window.specialId,
+      sidekickId: window.sidekickColourId,
+      coverId: window.coverId,
+      pronouns: window.pronouns,
+      language: window.language,
+      dedicationMessage: window.dedicationMessage,
+    };
+
     $('.add-to-cart-btn').attr(
       'data-item-custom1-value',
       window.sessionStorage.getItem('currentCharacterName')
@@ -355,11 +394,11 @@ window.Webflow.push(() => {
       'data-item-custom2-value',
       window.sessionStorage.getItem('currentCharacterId')
     );
+    $('.add-to-cart-btn').attr('data-item-custom3-value', JSON.stringify(currentCharacterObject));
 
-    // post to airtable
     airtable.postToAirTable();
     airtable.updateCharacter();
-    // wait for response from circular software
+    // wait for response from circular software (this is where we will do the polling stuff)
 
     // when response received, display preview
     $('.book-preview-container').css('display', 'flex');
@@ -368,14 +407,12 @@ window.Webflow.push(() => {
 
   $('.edit-character').click(function (e) {
     e.preventDefault();
-    $('.book-preview-container').hide();
-    $('.character-builder-container').show();
+    navigation.navigateToCharacterSelection();
   });
 
   $('.select-story').click(function (e) {
     e.preventDefault();
-    $('.book-preview-container').hide();
-    $('.book-selector-container').show();
+    navigation.navigateToBookSelection();
   });
 
   /*

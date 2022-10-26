@@ -1,3 +1,4 @@
+import * as alerts from '../src/alerts.js';
 import * as form from '../src/form.js';
 import * as snipcart from '../src/snipcart.js';
 
@@ -79,7 +80,7 @@ export function postToAirTable() {
     .catch((error) => console.log('error', error));
 }
 
-export function addCharacter() {
+export function addCharacter(callback) {
   const testBody = [
     {
       NAME: $('#hero-name-input').val(),
@@ -115,6 +116,7 @@ export function addCharacter() {
       // might need to be refactored to get the most recent version, rather than just index 0
       form.appendCharacterDropdownItems();
       sessionStorage.setItem('currentCharacterId', result[0]['fields']['RECORD_ID']);
+      callback && callback();
       return result[0];
     })
     .catch((error) => console.log('error', error));
@@ -122,7 +124,7 @@ export function addCharacter() {
   return record;
 }
 
-export function updateCharacter() {
+export function updateCharacter(callback) {
   const testBody = [
     {
       id: sessionStorage.getItem('currentCharacterId'),
@@ -157,6 +159,6 @@ export function updateCharacter() {
     requestOptions
   )
     .then((response) => response.json())
-    .then((result) => console.log('res', result))
+    .then(callback && callback())
     .catch((error) => console.log('error', error));
 }

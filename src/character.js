@@ -1,4 +1,5 @@
 import * as airtable from '../src/airtable.js';
+import * as alerts from '../src/alerts';
 import * as form from '../src/form.js';
 import * as loading from '../src/loading.js';
 import * as pagination from '../src/pagination.js';
@@ -91,12 +92,16 @@ export function saveCharacter() {
   if (userSignedIn) {
     let currentCharacterId = sessionStorage.getItem('currentCharacterId');
     sessionStorage.setItem('currentCharacterName', $('#hero-name-input').val());
-    currentCharacterId === null ? airtable.addCharacter() : airtable.updateCharacter();
+    currentCharacterId === null
+      ? airtable.addCharacter(
+          alerts.displayAlert('success', `${$('#hero-name-input').val()} was saved successfully!`)
+        )
+      : airtable.updateCharacter(
+          alerts.displayAlert('success', `${$('#hero-name-input').val()} was saved successfully!`)
+        );
     form.appendCharacterDropdownItems();
   } else {
-    $('.alert-banner').show();
-    $('.alert-banner').innerHtml('blallals');
-    // display error banner
+    alerts.displayAlert('error', 'You must sign in to save a character.');
   }
 }
 
