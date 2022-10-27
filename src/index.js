@@ -225,9 +225,9 @@ window.Webflow.push(() => {
       display: 'none',
     });
     // sets outline colour to the background of the step button
-    $(`<style>[type=radio]:checked + img { outline: 5px solid ${hexColour};}</style>`).appendTo(
-      'head'
-    );
+    $(
+      `<style>[type=radio]:checked + img { box-shadow: 0px 0px 0px 5px ${hexColour};}</style>`
+    ).appendTo('head');
     formStep = step;
   }
   $('.step-button').click(function (e) {
