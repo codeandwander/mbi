@@ -228,6 +228,7 @@ window.Webflow.push(() => {
     $(
       `<style>[type=radio]:checked + img { box-shadow: 0px 0px 0px 5px ${hexColour};}</style>`
     ).appendTo('head');
+    $(`<style>[type=radio]:not(:checked) + img { box-shadow: none; }</style>`).appendTo('head');
     formStep = step;
   }
   $('.step-button').click(function (e) {
