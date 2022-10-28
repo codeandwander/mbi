@@ -413,8 +413,7 @@ window.Webflow.push(() => {
     // wait for response from circular software (this is where we will do the polling stuff)
 
     // when response received, display preview
-    $('.book-preview-container').css('display', 'flex');
-    $('.book-selector-container').hide();
+    navigation.navigateToPreviewSection();
   });
 
   $('.edit-character').click(function (e) {

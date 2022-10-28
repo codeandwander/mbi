@@ -3,6 +3,7 @@ export function navigateToCharacterSelection() {
   $('.book-selector-container').hide();
   $('.book-container-large').hide();
   $('.character-builder-container').show();
+  $('.book-preview-container').hide();
 }
 
 export function navigateToBookSelection() {
@@ -11,4 +12,14 @@ export function navigateToBookSelection() {
   $('.book-small-list-container').show();
   $('.book-container-large').hide();
   $('.character-builder-container').hide();
+  $('.book-preview-container').hide();
+}
+
+export function navigateToPreviewSection() {
+  $('.book-preview-container').hide();
+  $('.book-selector-container').hide();
+  $('.book-small-list-container').hide();
+  $('.book-container-large').hide();
+  $('.character-builder-container').hide();
+  $('.book-preview-container').show();
 }
