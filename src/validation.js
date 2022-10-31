@@ -12,7 +12,7 @@ export function validInput(input, minLength, maxLength) {
   }
 
   if (errors) {
-    alerts.displayAlert(error, '', errors);
+    alerts.displayAlert('error', '', errors);
     return false;
   }
 
