@@ -7,6 +7,7 @@ import * as localStorage from '../src/localStorage.js';
 import * as navigation from '../src/navigation.js';
 import * as pagination from '../src/pagination.js';
 import * as snipcart from '../src/snipcart.js';
+import * as validation from '../src/validation.js';
 
 window.Webflow ||= [];
 window.Webflow.push(() => {
@@ -324,6 +325,8 @@ window.Webflow.push(() => {
     // validate firstname input is populated
     if (!$('input[name=fname]').val()) {
       alerts.displayAlert('error', 'Please enter a character name before continuing.');
+    } else if (validation.validInput($('input[name=fname]').val(), 2, 50)) {
+      return;
     } else {
       let currentCharacterId = sessionStorage.getItem('currentCharacterId');
       sessionStorage.setItem('currentCharacterName', $('#hero-name-input').val());
