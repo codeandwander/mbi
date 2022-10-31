@@ -356,13 +356,13 @@ window.Webflow.push(() => {
     selectedBook = $(this).prop('id').slice(0, -5);
 
     $('.book-small-list-container').hide();
-    $('.book-container-large').each(function () {
+    $('.book-large-container').each(function () {
       const expectedId = 'large-' + selectedBook;
-      $(this).attr('id') === expectedId ? $(this).css('display', 'flex') : $(this).hide();
+      $(this).attr('id') === expectedId ? $(this).show() : $(this).hide();
     });
   });
 
-  $('.book-container-large').each(function () {
+  $('.book-large-container').each(function () {
     // lowercase and hyphenates an id, adds to each book item
     const id = $(this).closest('div').find('.book-title').html().toLowerCase().replace(/ /g, '-');
     $(this).prop('id', 'large-' + id);
@@ -373,7 +373,7 @@ window.Webflow.push(() => {
     e.stopPropagation();
 
     $('.book-small-list-container').css('display', 'flex');
-    $('.book-container-large').hide();
+    $('.book-large-container').hide();
   });
 
   $('.see-your-story-button').click(function (e) {
