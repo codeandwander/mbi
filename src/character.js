@@ -153,6 +153,7 @@ export function randomiseCharacter() {
 
 // Render the character preview
 export function renderCharacterPreview(callback) {
+  console.log('config');
   // Hair
   if (styleColourId) {
     $('.hair:visible').first().hide();

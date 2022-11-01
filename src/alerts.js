@@ -8,13 +8,13 @@ export function displayAlert(alertType, message, list) {
   if (list) {
     let errorList = $('.alert-list');
 
+    errorList.empty();
+
     list.forEach((item) => {
-      let li = document.createElement('li');
-      li.innerText = item;
-      errorList.appendChild(li);
+      errorList.append($('<li>').text(item));
     });
 
-    list.show();
+    errorList.show();
     $('.alert-text-block').hide();
   } else {
     $('.alert-banner > .alert-text-block > strong').text(message);
