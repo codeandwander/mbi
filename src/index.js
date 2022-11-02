@@ -33,6 +33,7 @@ window.Webflow.push(() => {
   window.pronouns = '';
   window.language = '';
   window.dedicationMessage = '';
+  window.characterObjects = [];
 
   window.SnipcartSettings = {
     publicApiKey: 'NzAxOWMzODUtNmVjNS00NmEyLTlkNDktNDZhOTllYzIzMjkxNjM3OTc2MjY0NTYxOTc2NzY3',
@@ -43,110 +44,40 @@ window.Webflow.push(() => {
   // prettier-ignore
   (()=>{var c,d;(d=(c=window.SnipcartSettings).version)!=null||(c.version="3.0");var s,S;(S=(s=window.SnipcartSettings).timeoutDuration)!=null||(s.timeoutDuration=2750);var l,p;(p=(l=window.SnipcartSettings).domain)!=null||(l.domain="cdn.snipcart.com");var w,u;(u=(w=window.SnipcartSettings).protocol)!=null||(w.protocol="https");var f=window.SnipcartSettings.version.includes("v3.0.0-ci")||window.SnipcartSettings.version!="3.0"&&window.SnipcartSettings.version.localeCompare("3.4.0",void 0,{numeric:!0,sensitivity:"base"})===-1,m=["focus","mouseover","touchmove","scroll","keydown"];window.LoadSnipcart=o;document.readyState==="loading"?document.addEventListener("DOMContentLoaded",r):r();function r(){window.SnipcartSettings.loadStrategy?window.SnipcartSettings.loadStrategy==="on-user-interaction"&&(m.forEach(t=>document.addEventListener(t,o)),setTimeout(o,window.SnipcartSettings.timeoutDuration)):o()}var a=!1;function o(){if(a)return;a=!0;let t=document.getElementsByTagName("head")[0],e=document.querySelector("#snipcart"),i=document.querySelector(`src[src^="${window.SnipcartSettings.protocol}://${window.SnipcartSettings.domain}"][src$="snipcart.js"]`),n=document.querySelector(`link[href^="${window.SnipcartSettings.protocol}://${window.SnipcartSettings.domain}"][href$="snipcart.css"]`);e||(e=document.createElement("div"),e.id="snipcart",e.setAttribute("hidden","true"),document.body.appendChild(e)),v(e),i||(i=document.createElement("script"),i.src=`${window.SnipcartSettings.protocol}://${window.SnipcartSettings.domain}/themes/v${window.SnipcartSettings.version}/default/snipcart.js`,i.async=!0,t.appendChild(i)),n||(n=document.createElement("link"),n.rel="stylesheet",n.type="text/css",n.href=`${window.SnipcartSettings.protocol}://${window.SnipcartSettings.domain}/themes/v${window.SnipcartSettings.version}/default/snipcart.css`,t.prepend(n)),m.forEach(g=>document.removeEventListener(g,o))}function v(t){!f||(t.dataset.apiKey=window.SnipcartSettings.publicApiKey,window.SnipcartSettings.addProductBehavior&&(t.dataset.configAddProductBehavior=window.SnipcartSettings.addProductBehavior),window.SnipcartSettings.modalStyle&&(t.dataset.configModalStyle=window.SnipcartSettings.modalStyle),window.SnipcartSettings.currency&&(t.dataset.currency=window.SnipcartSettings.currency),window.SnipcartSettings.templatesUrl&&(t.dataset.templatesUrl=window.SnipcartSettings.templatesUrl))}})();
 
-  let characterObjects = [];
-
-  function getCharacterItems() {
-    getCharacterItemPage().then(addCharacterItemsToDOM).then(form.setCharacterPreviewClasses);
-  }
-
-  function getCharacterItemPage(pageParam) {
-    return fetch(
-      `https://make-believe-final.webflow.io/character-items${pageParam ? pageParam : ''}`
-    )
-      .then((response) => {
-        if (response.status === 404) {
-          throw new Error('Page could not be found.');
-        }
-
-        return response.text();
-      })
-      .then((text) => {
-        const div = document.createElement('div');
-        div.innerHTML = text;
-        let charItems = div.querySelectorAll('.character-items');
-
-        let characterItemsData = Array.from(charItems).map((charItem) => {
-          let characterItemObj = {};
-          let spans = charItem.querySelectorAll('span');
-
-          spans.forEach((item) => {
-            characterItemObj[item.className] = item.textContent;
-          });
-
-          return characterItemObj;
-        });
-
-        characterObjects = characterObjects.concat(characterItemsData);
-
-        const nextButton = div.querySelector('.w-pagination-next');
-
-        if (nextButton) {
-          return getCharacterItemPage(`?${nextButton.href.split('?')[1]}`);
-        }
-
-        return characterObjects;
-      });
-  }
-
-  // for each character object, route the items to a new div inside of the character-preview div.
-  function addCharacterItemsToDOM() {
-    let characterPreviewDiv = document.querySelector('.character-preview');
-
-    characterObjects.forEach((obj) => {
-      let itemDiv = document.createElement('div');
-      itemDiv.classList.add('character-item');
-
-      // Category
-      let categoryDiv = document.createElement('div');
-      categoryDiv.classList.add('character-item-category');
-      let categoryContent = document.createTextNode(obj['character-item-category']);
-      categoryDiv.appendChild(categoryContent);
-
-      // Category
-      let labelDiv = document.createElement('div');
-      labelDiv.classList.add('character-item-preview-label');
-      let labelContent = document.createTextNode(obj['character-item-preview-label']);
-      labelDiv.appendChild(labelContent);
-
-      // Category
-      let imageElement = document.createElement('img');
-      imageElement.classList.add('character-item-preview-image');
-      imageElement.src = obj['character-item-preview-image'];
-
-      itemDiv.appendChild(categoryDiv);
-      itemDiv.appendChild(labelDiv);
-      itemDiv.appendChild(imageElement);
-
-      characterPreviewDiv.appendChild(itemDiv);
-    });
-  }
-
   $(document).ready(function () {
     document.addEventListener('snipcart.ready', () => {
-      Snipcart.events.on('customer.signedin', (customer) => {
-        $('.nav-login-btn').html('Profile');
-        $('.select-character').show();
-        $('.new-character-button').show();
-        window.randomiseOrLoadCharacter();
-      });
+      // User is on homepage
+      if (window.location.pathname === '/') {
+        Snipcart.events.on('snipcart.initialized', (snipcartState) => {
+          snipcart.toggleUiElements();
+        });
+      }
 
-      Snipcart.events.on('customer.signedout', (customer) => {
-        sessionStorage.clear();
-        $('.nav-login-btn').html('Sign In');
-        $('.select-character').hide();
-        $('.new-character-button').hide();
-        window.randomiseOrLoadCharacter();
-      });
+      // User is on character creation
+      if (window.location.href.indexOf('character-creation') > -1) {
+        Snipcart.events.on('customer.signedin', (customer) => {
+          $('.nav-login-btn').html('Profile');
+          $('.select-character').show();
+          $('.new-character-button').show();
+          window.randomiseOrLoadCharacter();
+        });
 
-      Snipcart.events.on('snipcart.initialized', (snipcartState) => {
-        navigation.navigateToCharacterSelection();
-        snipcart.toggleUiElements();
-        form.setFormStep('#step-1-button');
-        form.setInputValues();
-        getCharacterItems(addCharacterItemsToDOM());
-        // add items to DOM
-        randomiseOrLoadCharacter();
-      });
+        Snipcart.events.on('customer.signedout', (customer) => {
+          sessionStorage.clear();
+          $('.nav-login-btn').html('Sign In');
+          $('.select-character').hide();
+          $('.new-character-button').hide();
+          window.randomiseOrLoadCharacter();
+        });
+
+        Snipcart.events.on('snipcart.initialized', (snipcartState) => {
+          navigation.navigateToCharacterSelection();
+          snipcart.toggleUiElements();
+          form.setFormStep('#step-1-button');
+          form.setInputValues();
+          character.loadCharacterPreviewItems();
+        });
+      }
 
       // Pagination
       var resizeDelay = 200;
@@ -185,17 +116,13 @@ window.Webflow.push(() => {
     const userSignedIn = Snipcart.store.getState().customer.status === 'SignedIn';
 
     // if input first name is empty ??????????? LOOK AT THIS
-
-    // console.log($('input[name="fname"]').val());
-    // if (!$('input[name="fname"]').val()) {
-    //   console.log('hio');
-
-    if (sessionStorage.getItem('currentCharacterId') === null && !userSignedIn) {
-      character.randomiseCharacter();
-    } else {
-      character.buildUserCharacter();
+    if (!$('input[name="fname"]').val()) {
+      if (sessionStorage.getItem('currentCharacterId') === null && !userSignedIn) {
+        character.randomiseCharacter();
+      } else {
+        character.buildUserCharacter();
+      }
     }
-    // }
   };
 
   // Gets the ID of the selected hairstyle, e.g. hs001
@@ -244,11 +171,22 @@ window.Webflow.push(() => {
   });
 
   // New Character Button Click
-  $('.new-character-button').click(function (e) {
+  $('.new-character-button, .new-character-button-large').click(function (e) {
     e.preventDefault();
     e.stopPropagation();
 
-    character.createNewCharacter();
+    navigation.navigateToCharacterSelection();
+    character.randomiseCharacter();
+  });
+
+  // Checkout Button Click
+  $('.checkout-button').click(function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!window.location.hash) {
+      window.location.hash = '#/checkout';
+    }
   });
 
   // Character Dropdown Population
@@ -406,23 +344,22 @@ window.Webflow.push(() => {
 
   $('.pick-a-book').click(function (e) {
     e.preventDefault();
-    // validate firstname input is populated
-    if (!$('input[name=fname]').val()) {
-      alerts.displayAlert('error', 'Please enter a character name before continuing.');
-    } else if (validation.validInput($('input[name=fname]').val(), 2, 50)) {
+    let validInput = validation.validInput($('input[name=fname]').val(), 2, 50);
+
+    if (!validInput) {
       return;
-    } else {
-      let currentCharacterId = sessionStorage.getItem('currentCharacterId');
-      sessionStorage.setItem('currentCharacterName', $('#hero-name-input').val());
-      currentCharacterId === null
-        ? airtable.addCharacter(
-            alerts.displayAlert('success', `${$('#hero-name-input').val()} was saved successfully!`)
-          )
-        : airtable.updateCharacter(
-            alerts.displayAlert('success', `${$('#hero-name-input').val()} was saved successfully!`)
-          );
-      navigation.navigateToBookSelection();
     }
+
+    let currentCharacterId = sessionStorage.getItem('currentCharacterId');
+    sessionStorage.setItem('currentCharacterName', $('#hero-name-input').val());
+    currentCharacterId === null
+      ? airtable.addCharacter(
+          alerts.displayAlert('success', `${$('#hero-name-input').val()} was saved successfully!`)
+        )
+      : airtable.updateCharacter(
+          alerts.displayAlert('success', `${$('#hero-name-input').val()} was saved successfully!`)
+        );
+    navigation.navigateToBookSelection();
   });
 
   $('.edit-character-button').click(function (e) {
@@ -430,6 +367,12 @@ window.Webflow.push(() => {
 
     $('.character-builder-container').show();
     $('.book-selector-container').hide();
+  });
+
+  $('.basket-confirmation_book-item').each(function () {
+    // lowercase and hyphenates an id, adds to each book item
+    const id = $(this).closest('div').find('.book-title').html().toLowerCase().replace(/ /g, '-');
+    $(this).prop('id', id + '-basket-book');
   });
 
   $('.book-container').each(function () {
@@ -465,6 +408,15 @@ window.Webflow.push(() => {
 
   $('.see-your-story-button').click(function (e) {
     e.preventDefault();
+    e.stopPropagation();
+
+    if ($('.textarea:visible').val()) {
+      let validInput = validation.validInput($('.textarea:visible').val(), 0, 300);
+      if (!validInput) {
+        return;
+      }
+    }
+
     localStorage.setSessionId();
     form.displayBookControls();
 
@@ -514,12 +466,17 @@ window.Webflow.push(() => {
   });
 
   /*
-   * Preview Screen
+   * Add To Cart Button
    */
 
   $('.add-to-cart-btn').click(function (e) {
-    navigation.navigateToCharacterSelection();
-    character.randomiseCharacter();
+    $('.basket-confirmation_book-item').each(function () {
+      $('.character-name-span').text(sessionStorage.currentCharacterName);
+      const expectedId = `${selectedBook}-basket-book`;
+      $(this).attr('id') === expectedId ? $(this).show() : $(this).hide();
+    });
+
+    navigation.navigateToBasketConfirmation();
   });
 
   /*
