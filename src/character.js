@@ -153,7 +153,6 @@ export function randomiseCharacter() {
 
 // Render the character preview
 export function renderCharacterPreview(callback) {
-  console.log('config');
   // Hair
   if (styleColourId) {
     $('.hair:visible').first().hide();
@@ -250,4 +249,81 @@ export function renderCharacterPreview(callback) {
   }
 
   callback && callback();
+}
+
+export function loadCharacterPreviewItems() {
+  getCharacterItems()
+    .then(addCharacterItemsToDOM)
+    .then(form.setCharacterPreviewClasses)
+    .then(window.randomiseOrLoadCharacter);
+}
+
+function getCharacterItems(pageParam) {
+  return fetch(`https://make-believe-final.webflow.io/character-items${pageParam ? pageParam : ''}`)
+    .then((response) => {
+      if (response.status === 404) {
+        throw new Error('Page could not be found.');
+      }
+
+      return response.text();
+    })
+    .then((text) => {
+      const div = document.createElement('div');
+      div.innerHTML = text;
+      let charItems = div.querySelectorAll('.character-items');
+
+      let characterItemsData = Array.from(charItems).map((charItem) => {
+        let characterItemObj = {};
+        let spans = charItem.querySelectorAll('span');
+
+        spans.forEach((item) => {
+          characterItemObj[item.className] = item.textContent;
+        });
+
+        return characterItemObj;
+      });
+
+      characterObjects = characterObjects.concat(characterItemsData);
+
+      const nextButton = div.querySelector('.w-pagination-next');
+
+      if (nextButton) {
+        return getCharacterItems(`?${nextButton.href.split('?')[1]}`);
+      }
+
+      return characterObjects;
+    });
+}
+
+// for each character object, route the items to a new div inside of the character-preview div.
+function addCharacterItemsToDOM() {
+  let characterPreviewDiv = document.querySelector('.character-preview');
+
+  characterObjects.forEach((obj) => {
+    let itemDiv = document.createElement('div');
+    itemDiv.classList.add('character-item');
+
+    // Category
+    let categoryDiv = document.createElement('div');
+    categoryDiv.classList.add('character-item-category');
+    let categoryContent = document.createTextNode(obj['character-item-category']);
+    categoryDiv.appendChild(categoryContent);
+
+    // Category
+    let labelDiv = document.createElement('div');
+    labelDiv.classList.add('character-item-preview-label');
+    let labelContent = document.createTextNode(obj['character-item-preview-label']);
+    labelDiv.appendChild(labelContent);
+
+    // Category
+    let imageElement = document.createElement('img');
+    imageElement.classList.add('character-item-preview-image');
+    imageElement.src = obj['character-item-preview-image'];
+
+    itemDiv.appendChild(categoryDiv);
+    itemDiv.appendChild(labelDiv);
+    itemDiv.appendChild(imageElement);
+
+    characterPreviewDiv.appendChild(itemDiv);
+  });
 }
