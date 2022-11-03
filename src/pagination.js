@@ -25,21 +25,31 @@ function getElements() {
 
 // Should be a DRY way of doing this.
 function getPageOfSelectedItem() {
-  if (window.hairColour === 'black') {
-    blackHairList.forEach((item, index) => {
-      if (item.querySelector('input[name="hair-style"]').checked) {
-        indexOfSelectedItem = index;
-      }
-    });
+  let currentHairList;
+
+  switch (window.hairColour) {
+    case 'black':
+      currentHairList = blackHairList;
+      break;
+    case 'blonde':
+      currentHairList = blondeHairList;
+      break;
+    case 'brown':
+      currentHairList = brownHairList;
+      break;
+    case 'red':
+      currentHairList = redHairList;
+      break;
+    case 'white':
+      currentHairList = whiteHairList;
+      break;
   }
 
-  if (window.hairColour === 'blonde') {
-    blondeHairList.forEach((item, index) => {
-      if (item.querySelector('input[name="hair-style"]').checked) {
-        indexOfSelectedItem = index;
-      }
-    });
-  }
+  currentHairList?.forEach((item, index) => {
+    if (item.querySelector('input[name="hair-style"]').checked) {
+      indexOfSelectedItem = index;
+    }
+  });
 
   window.currentPage = Math.ceil((indexOfSelectedItem + 1) / 9);
 }
