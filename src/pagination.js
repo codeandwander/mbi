@@ -2,6 +2,8 @@
 var blackHairList;
 var blondeHairList;
 var brownHairList;
+var redHairList;
+var whiteHairList;
 var numberOfItems;
 window.numberPerPage;
 var indexOfSelectedItem;
@@ -10,13 +12,12 @@ window.numberOfPages;
 
 function getElements() {
   blackHairList = document.querySelectorAll('.hair-collection-wrapper.black .hair-style-container');
-
-  // eslint-disable-next-line prettier/prettier
   blondeHairList = document.querySelectorAll(
     '.hair-collection-wrapper.blonde .hair-style-container'
   );
-
   brownHairList = document.querySelectorAll('.hair-collection-wrapper.brown .hair-style-container');
+  redHairList = document.querySelectorAll('.hair-collection-wrapper.red .hair-style-container');
+  whiteHairList = document.querySelectorAll('.hair-collection-wrapper.white .hair-style-container');
 
   numberOfItems = blackHairList.length;
   window.numberOfPages = Math.ceil(numberOfItems / window.numberPerPage);
@@ -54,6 +55,8 @@ export function buildPage(currPage) {
   var blackElems = Array.prototype.slice.call(blackHairList, trimStart, trimEnd);
   var blondeElems = Array.prototype.slice.call(blondeHairList, trimStart, trimEnd);
   var brownElems = Array.prototype.slice.call(brownHairList, trimStart, trimEnd);
+  var redElems = Array.prototype.slice.call(redHairList, trimStart, trimEnd);
+  var whiteElems = Array.prototype.slice.call(whiteHairList, trimStart, trimEnd);
 
   function showElements(array) {
     [].forEach.call(array, function (item) {
@@ -71,7 +74,11 @@ export function buildPage(currPage) {
   hideElements(blackHairList);
   hideElements(blondeHairList);
   hideElements(brownHairList);
+  hideElements(redHairList);
+  hideElements(whiteHairList);
   showElements(blackElems);
   showElements(blondeElems);
   showElements(brownElems);
+  showElements(redElems);
+  showElements(whiteElems);
 }
