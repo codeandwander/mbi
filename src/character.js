@@ -70,7 +70,7 @@ function configureInputs() {
   window.getSelectedStyles();
   form.displaySelectedColours();
   form.checkSelectedHairstyle(function () {
-    pagination.buildPage();
+    pagination.buildPage(undefined, window.stepName);
   });
   renderCharacterPreview(function () {
     loading.displayElements();

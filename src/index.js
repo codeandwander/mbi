@@ -12,6 +12,7 @@ import * as validation from '../src/validation.js';
 window.Webflow ||= [];
 window.Webflow.push(() => {
   window.formStep = 1;
+  window.stepName = 'hair';
   window.hairstyleId = '';
   window.hairColour = '';
   window.styleColourId = hairstyleId + '-' + hairColour;
@@ -85,7 +86,7 @@ window.Webflow.push(() => {
       var resizer = function () {
         if (doResize) {
           window.innerWidth <= 767 ? (window.numberPerPage = 3) : (window.numberPerPage = 9);
-          pagination.buildPage();
+          pagination.buildPage(undefined, window.stepName);
           doResize = false;
         }
       };
@@ -146,16 +147,16 @@ window.Webflow.push(() => {
    * PAGINATION BUTTONS
    */
 
-  $('#next-pagination-button').click(function () {
+  $('.pagination-down-arrow').click(function () {
     if (window.currentPage === window.numberOfPages) return;
     window.currentPage += 1;
-    pagination.buildPage(window.currentPage);
+    pagination.buildPage(window.currentPage, window.stepName);
   });
 
-  $('#prev-pagination-button').click(function () {
+  $('.pagination-up-arrow').click(function () {
     if (window.currentPage === 1) return;
     window.currentPage -= 1;
-    pagination.buildPage(window.currentPage);
+    pagination.buildPage(window.currentPage, window.stepName);
   });
 
   /*
@@ -215,24 +216,32 @@ window.Webflow.push(() => {
     switch (step) {
       case '1':
         hexColour = '#F080B2';
+        window.stepName = 'hair';
+        pagination.buildPage(undefined, 'hair');
         break;
       case '2':
         hexColour = '#01AFDA';
         break;
       case '3':
         hexColour = '#77B82A';
+        window.stepName = 'skin';
+        pagination.buildPage(undefined, 'skin');
         break;
       case '4':
         hexColour = '#FCD100';
         break;
       case '5':
         hexColour = '#E84E10';
+        window.stepName = 'mask';
+        pagination.buildPage(undefined, 'mask');
         break;
       case '6':
         hexColour = '#01A187';
         break;
       case '7':
         hexColour = '#E30613';
+        window.stepName = 'special';
+        pagination.buildPage(undefined, 'special');
         break;
       case '8':
         hexColour = '#E30F6B';
