@@ -73,15 +73,8 @@ function configureInputs() {
     pagination.buildPage(undefined, window.stepName);
   });
   renderCharacterPreview(function () {
-    loading.displayElements();
+    loading.endLoadingAnimation();
   });
-}
-
-// Creates a new randomised character
-export function createNewCharacter() {
-  $('.name-input').val('');
-  randomiseCharacter();
-  airtable.addCharacter();
 }
 
 // Save an existing character to a user profile
@@ -130,8 +123,6 @@ export function randomiseCharacter() {
   const randomSidekickColour = form.getRandomIndex('input[name="sidekick-colour"]');
   const randomSidekick = form.getRandomIndex('input[name="sidekick"]');
   const randomCover = form.getRandomIndex('input[name="cover"]');
-  const randomPronoun = form.getRandomIndex('input[name="pronoun"]');
-  const randomLanguage = form.getRandomIndex('input[name="language"]');
 
   $('input[name="hair-colour"]').eq(randomHairColour).prop('checked', true);
   $('input[name="hair-style"]').eq(randomHairStyle).prop('checked', true);
@@ -144,8 +135,6 @@ export function randomiseCharacter() {
   $('input[name="sidekick-colour"]').eq(randomSidekickColour).prop('checked', true);
   $('input[name="sidekick"]').eq(randomSidekick).prop('checked', true);
   $('input[name="cover"]').eq(randomCover).prop('checked', true);
-  $('input[name="pronoun"]').eq(randomPronoun).prop('checked', true);
-  $('input[name="language"]').eq(randomLanguage).prop('checked', true);
 
   sessionStorage.clear();
   configureInputs();

@@ -60,6 +60,8 @@ export function postToAirTable() {
       BOOK_ID: window.selectedBook,
       SESSION_ID: localStorage.getItem('sessionId'),
       USER_EMAIL: snipcart.getUserEmail(),
+      PRONOUNS: window.pronouns,
+      LANGUAGE: window.language,
       DEDICATION_MESSAGE: window.dedicationMessage,
     },
   ];
@@ -77,6 +79,13 @@ export function postToAirTable() {
     requestOptions
   )
     .then((response) => response.json())
+    .then((result) => {
+      fetch(
+        `https://hook.eu1.make.com/0kxggab30625jvpqkvviz6fo9dvxzryf?string=P-${encodeURIComponent(
+          result[0]['fields']['RECORD_ID']
+        )}-CHOSEN`
+      );
+    })
     .catch((error) => console.log('error', error));
 }
 
@@ -94,8 +103,6 @@ export function addCharacter(callback) {
       SPECIAL: specialId,
       SIDEKICK: sidekickColourId,
       COVER_COLOUR: coverId,
-      PRONOUNS: pronouns,
-      LANGUAGE: language,
     },
   ];
   const myHeaders = new Headers();
@@ -113,7 +120,11 @@ export function addCharacter(callback) {
   )
     .then((response) => response.json())
     .then((result) => {
-      // might need to be refactored to get the most recent version, rather than just index 0
+      fetch(
+        `https://hook.eu1.make.com/0kxggab30625jvpqkvviz6fo9dvxzryf?string=C-${encodeURIComponent(
+          result[0]['fields']['RECORD_ID']
+        )}-CREATED`
+      );
       form.appendCharacterDropdownItems();
       sessionStorage.setItem('currentCharacterId', result[0]['fields']['RECORD_ID']);
       callback && callback();
@@ -140,8 +151,6 @@ export function updateCharacter(callback) {
         SPECIAL: specialId,
         SIDEKICK: sidekickColourId,
         COVER_COLOUR: coverId,
-        PRONOUNS: pronouns,
-        LANGUAGE: language,
       },
     },
   ];
@@ -159,6 +168,13 @@ export function updateCharacter(callback) {
     requestOptions
   )
     .then((response) => response.json())
-    .then(callback && callback())
+    .then((result) => {
+      fetch(
+        `https://hook.eu1.make.com/0kxggab30625jvpqkvviz6fo9dvxzryf?string=C-${sessionStorage.getItem(
+          encodeURIComponent('currentCharacterId')
+        )}-MODIFIED`
+      );
+      callback && callback();
+    })
     .catch((error) => console.log('error', error));
 }

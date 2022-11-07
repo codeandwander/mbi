@@ -104,6 +104,7 @@ window.Webflow.push(() => {
     theme: 'light',
     embedType: 'frame',
     thumbWidth: '300',
+    hideNavBar: true,
     autoFullscreen: true,
     showLoginLink: false,
     clientNameLink: false,
@@ -114,9 +115,9 @@ window.Webflow.push(() => {
   });
 
   window.randomiseOrLoadCharacter = function () {
+    //loading.beginLoadingAnimation();
     const userSignedIn = Snipcart.store.getState().customer.status === 'SignedIn';
 
-    // if input first name is empty ??????????? LOOK AT THIS
     if (!$('input[name="fname"]').val()) {
       if (sessionStorage.getItem('currentCharacterId') === null && !userSignedIn) {
         character.randomiseCharacter();
@@ -139,8 +140,6 @@ window.Webflow.push(() => {
     specialId = $('input[name=special]:checked', '#character-creation-form').val().toLowerCase();
     sidekickId = sidekickAndColourId.slice(0, 5);
     coverId = $('input[name=cover]:checked', '#character-creation-form').val().toLowerCase();
-    pronouns = $('input[name=pronoun]:checked').val().toLowerCase();
-    language = $('input[name=language]:checked').val().toLowerCase();
   };
 
   /*
@@ -418,6 +417,27 @@ window.Webflow.push(() => {
   $('.see-your-story-button').click(function (e) {
     e.preventDefault();
     e.stopPropagation();
+
+    var allAnswered = true;
+
+    $('form#wf-form-pronouns-form :input:radio:visible').each(function () {
+      var name = $(this).attr('name');
+      if ($('input:radio[name=' + name + ']:checked').length === 0) {
+        allAnswered = false;
+      }
+    });
+
+    $('form#wf-form-language-form :input:radio:visible').each(function () {
+      var name = $(this).attr('name');
+      if ($('input:radio[name=' + name + ']:checked').length === 0) {
+        allAnswered = false;
+      }
+    });
+
+    if (!allAnswered) {
+      alerts.displayAlert('error', 'Please enter values for both pronouns and language!');
+      return;
+    }
 
     if ($('.textarea:visible').val()) {
       let validInput = validation.validInput($('.textarea:visible').val(), 0, 300);
