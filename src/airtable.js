@@ -80,6 +80,7 @@ export function postToAirTable() {
   )
     .then((response) => response.json())
     .then((result) => {
+      window.currentPreviewId = `1000${result[0]['fields']['PREVIEW_ID']}`;
       fetch(
         `https://hook.eu1.make.com/0kxggab30625jvpqkvviz6fo9dvxzryf?string=P-${encodeURIComponent(
           result[0]['fields']['RECORD_ID']

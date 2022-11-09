@@ -35,6 +35,7 @@ window.Webflow.push(() => {
   window.language = '';
   window.dedicationMessage = '';
   window.characterObjects = [];
+  window.currentPreviewId = '';
 
   window.SnipcartSettings = {
     publicApiKey: 'NzAxOWMzODUtNmVjNS00NmEyLTlkNDktNDZhOTllYzIzMjkxNjM3OTc2MjY0NTYxOTc2NzY3',
@@ -100,7 +101,7 @@ window.Webflow.push(() => {
 
   const masterplan = new MasterPlan(document.getElementById('masterplan'), {
     clientID: '5140',
-    jobID: '2000',
+    jobID: window.currentPreviewId,
     theme: 'light',
     embedType: 'frame',
     thumbWidth: '300',
