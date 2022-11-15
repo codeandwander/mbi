@@ -62,10 +62,10 @@ window.Webflow.push(() => {
           $('.select-character').show();
           $('.new-character-button').show();
           if (window.innerWidth <= 991) {
-            $('.character-selector-mobile-controls').show();
+            $('.character-selector-container-mobile').show();
             $('.character-selector-container').hide();
           } else {
-            $('.character-selector-mobile-controls').hide();
+            $('.character-selector-container-mobile').hide();
             $('.character-selector-container').show();
           }
           window.randomiseOrLoadCharacter();
@@ -76,7 +76,7 @@ window.Webflow.push(() => {
           $('.nav-login-btn').html('Sign In');
           $('.select-character').hide();
           $('.new-character-button').hide();
-          $('.character-selector-mobile-controls').hide();
+          $('.character-selector-container-mobile').hide();
           $('.character-selector-container').hide();
           window.randomiseOrLoadCharacter();
         });
