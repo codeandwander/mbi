@@ -60,8 +60,11 @@ export function appendCharacterDropdownItems() {
           id: this.id,
           text: this.fields['NAME'],
         }),
-        $deleteBtn = $('<div/>', { class: 'character-list-item-delete', id: this.id, text: 'X' });
+        $deleteBtn = $('<div/>', { class: 'character-list-item-delete', id: this.id });
 
+      $deleteBtn.prepend(
+        '<img class="bin-icon" src="https://uploads-ssl.webflow.com/6318bc2064b174efcf6572f4/63738d42ccaf13e6da927487_recycle-bin-icon.svg />'
+      );
       $wrapper.append($item);
       $wrapper.append($deleteBtn);
       $wrapper.clone().appendTo(characterSelectorList);
