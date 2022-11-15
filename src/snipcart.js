@@ -12,8 +12,13 @@ export function toggleUiElements() {
     $('.nav-login-btn').html('Profile');
     $('.select-character').show();
     $('.new-character-button').show();
-    $('.character-selector-mobile-controls').show();
-    $('.character-selector-container').show();
+    if (window.innerWidth <= 991) {
+      $('.character-selector-mobile-controls').show();
+      $('.character-selector-container').hide();
+    } else {
+      $('.character-selector-mobile-controls').hide();
+      $('.character-selector-container').show();
+    }
   } else {
     $('.nav-login-btn').html('Sign In');
     $('.select-character').hide();
