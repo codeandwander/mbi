@@ -16,12 +16,11 @@ export function buildUserCharacter() {
     let characterList = airtable.getUserCharacters(userEmail);
 
     characterList.then((result) => {
-      result = $.parseJSON(result);
       form.appendCharacterDropdownItems();
 
-      if (result['records'].length > 0) {
+      if (result.length > 0) {
         // Get most recently updated character
-        const latestCharacter = result['records'].reduce((a, b) =>
+        const latestCharacter = result.reduce((a, b) =>
           a.fields.MODIFIED_AT > b.fields.MODIFIED_AT ? a : b
         );
         configureCharacter(latestCharacter['fields']);

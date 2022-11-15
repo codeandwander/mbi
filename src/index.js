@@ -190,19 +190,6 @@ window.Webflow.push(() => {
     }
   });
 
-  // Character Dropdown Population
-  $('.w-dropdown-list').on('click', '.character-dropdown-link', function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const characterId = $(this).attr('id');
-
-    let record = airtable.getRecord(characterId);
-    record.then((result) => {
-      character.configureCharacter(result['fields']);
-    });
-  });
-
   /*
    * FORM STEP FUNCTIONS
    */
@@ -368,6 +355,7 @@ window.Webflow.push(() => {
       : airtable.updateCharacter(
           alerts.displayAlert('success', `${$('#hero-name-input').val()} was saved successfully!`)
         );
+    form.appendCharacterDropdownItems();
     navigation.navigateToBookSelection();
   });
 

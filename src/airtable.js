@@ -18,8 +18,8 @@ export function getUserCharacters(userEmail) {
   )
     .then((response) => response.text())
     .then((result) => {
-      // might need to be refactored to get the most recent version, rather than just index 0
-      return result;
+      result = JSON.parse(result);
+      return result.records.slice(Math.max(result.records.length - 5, 0));
     })
     .catch((error) => console.log('error', error));
 
@@ -126,7 +126,6 @@ export function addCharacter(callback) {
           result[0]['fields']['RECORD_ID']
         )}-CREATED`
       );
-      form.appendCharacterDropdownItems();
       sessionStorage.setItem('currentCharacterId', result[0]['fields']['RECORD_ID']);
       callback && callback();
       return result[0];
@@ -177,5 +176,24 @@ export function updateCharacter(callback) {
       );
       callback && callback();
     })
+    .catch((error) => console.log('error', error));
+}
+
+export function deleteCharacter(id, name) {
+  var myHeaders = new Headers();
+  myHeaders.append('Content-Type', 'application/json');
+  var requestOptions = {
+    method: 'delete',
+    headers: myHeaders,
+    redirect: 'follow',
+    body: JSON.stringify([id]),
+  };
+
+  fetch(
+    'https://v1.nocodeapi.com/makebelieveme/airtable/nmeOnHAeFloOUpCL?tableName=characters',
+    requestOptions
+  )
+    .then((response) => response.text())
+    .then(alerts.displayAlert('success', `${name} was successfully deleted!`))
     .catch((error) => console.log('error', error));
 }

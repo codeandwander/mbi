@@ -1,5 +1,7 @@
 import * as airtable from '../src/airtable.js';
+import * as character from '../src/character.js';
 import * as snipcart from '../src/snipcart.js';
+import { displayAlert } from './alerts.js';
 
 // Set input values for character choices
 // This can be changed to foreach over a class specifically for the character radio inputs
@@ -39,19 +41,65 @@ export function setFormStep(stepButtonID) {
   $(stepButtonID).prop('disabled', true).addClass('selected-form-step');
 }
 
+//refactor this function to display them in the tabs
 export function appendCharacterDropdownItems() {
   let userEmail = snipcart.getUserEmail();
   let characterList = airtable.getUserCharacters(userEmail);
-  let $characterDropdown = $('.w-dropdown-list');
-  $characterDropdown.empty();
+  let characterSelectorList = $('.character-selector-list');
+  // mobile version
+  let characterDropdownList = $('.character-dropdown-list');
+
+  characterSelectorList.empty();
+  characterDropdownList.empty();
 
   characterList.then((result) => {
-    result = $.parseJSON(result);
+    $.each(result, function () {
+      var $wrapper = $('<div/>', { class: 'character-list-item-container' }),
+        $item = $('<div/>', {
+          class: 'character-list-item',
+          id: this.id,
+          text: this.fields['NAME'],
+        }),
+        $deleteBtn = $('<div/>', { class: 'character-list-item-delete', id: this.id, text: 'X' });
 
-    $.each(result['records'], function () {
-      $characterDropdown.append(
-        `<a href="#" class="w-dropdown-link character-dropdown-link" tabindex="0" id="${this.id}">${this.fields['NAME']}</a>`
-      );
+      $wrapper.append($item);
+      $wrapper.append($deleteBtn);
+      $wrapper.clone().appendTo(characterSelectorList);
+      $wrapper.clone().appendTo(characterDropdownList);
+    });
+
+    $('.w-dropdown-list div').click(function () {
+      console.log('hi');
+      $('.dropdown').triggerHandler('w-close.w-dropdown');
+    });
+
+    // Add click function to each button
+    $('.character-list-item').click(function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const characterId = $(this).attr('id');
+
+      let record = airtable.getRecord(characterId);
+      record.then((result) => {
+        character.configureCharacter(result['fields']);
+      });
+    });
+
+    $('.character-list-item-delete').click(function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const characterId = $(this).attr('id');
+      const characterName = $(this).parent().find('.character-list-item').text();
+
+      if (sessionStorage.getItem('currentCharacterId') === characterId) {
+        displayAlert('error', 'You cannot delete a character that is currently loaded.');
+        return;
+      }
+
+      airtable.deleteCharacter(characterId, characterName);
+      $(`#${characterId}`).parent().remove();
     });
   });
 }
@@ -64,8 +112,6 @@ export function displaySelectedColours() {
     .toLowerCase();
 
   sidekickColour = sidekickColour.substr(3);
-
-  console.log(sidekickColour);
 
   $('.hair-collection-wrapper').each(function () {
     $(this).attr('class').includes(hairColour) ? $(this).show() : $(this).hide();
