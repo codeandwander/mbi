@@ -61,10 +61,13 @@ window.Webflow.push(() => {
           $('.nav-login-btn').html('Profile');
           $('.select-character').show();
           $('.new-character-button').show();
-          window.innerWidth <= 991
-            ? $('.character-selector-mobile-controls').show()
-            : $('.character-selector-mobile-controls').show();
-          $('.character-selector-container').show();
+          if (window.innerWidth <= 991) {
+            $('.character-selector-mobile-controls').show();
+            $('.character-selector-container').hide();
+          } else {
+            $('.character-selector-mobile-controls').hide();
+            $('.character-selector-container').show();
+          }
           window.randomiseOrLoadCharacter();
         });
 
@@ -73,9 +76,13 @@ window.Webflow.push(() => {
           $('.nav-login-btn').html('Sign In');
           $('.select-character').hide();
           $('.new-character-button').hide();
-          window.innerWidth <= 991
-            ? $('.character-selector-mobile-controls').hide()
-            : $('.character-selector-mobile-controls').hide();
+          if (window.innerWidth <= 991) {
+            $('.character-selector-mobile-controls').show();
+            $('.character-selector-container').hide();
+          } else {
+            $('.character-selector-mobile-controls').hide();
+            $('.character-selector-container').show();
+          }
           window.randomiseOrLoadCharacter();
         });
 
