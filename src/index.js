@@ -188,7 +188,7 @@ window.Webflow.push(() => {
   $('.save-character-button').click(function (e) {
     e.stopPropagation();
     e.preventDefault();
-
+    loading.beginLoadingAnimation();
     character.saveCharacter();
   });
 
@@ -376,7 +376,7 @@ window.Webflow.push(() => {
       : airtable.updateCharacter(
           alerts.displayAlert('success', `${$('#hero-name-input').val()} was saved successfully!`)
         );
-    form.appendCharacterDropdownItems();
+    form.appendCharacterDropdownItems(loading.endLoadingAnimation);
     navigation.navigateToBookSelection();
   });
 

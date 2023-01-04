@@ -16,7 +16,7 @@ export function buildUserCharacter() {
     let characterList = airtable.getUserCharacters(userEmail);
 
     characterList.then((result) => {
-      form.appendCharacterDropdownItems();
+      form.appendCharacterDropdownItems(loading.endLoadingAnimation);
 
       if (result.length > 0) {
         // Get most recently updated character
@@ -72,12 +72,13 @@ function configureInputs() {
     pagination.buildPage(undefined, window.stepName);
   });
   renderCharacterPreview(function () {
-    loading.endLoadingAnimation();
+    //loading.endLoadingAnimation();
   });
 }
 
 // Save an existing character to a user profile
 export function saveCharacter() {
+  loading.beginLoadingAnimation();
   // validate inputs
   let heroNameInput = $('#hero-name-input').val();
   let validInput = validation.validInput(heroNameInput, 2, 50);
@@ -102,7 +103,7 @@ export function saveCharacter() {
       : airtable.updateCharacter(
           alerts.displayAlert('success', `${heroNameInput} was saved successfully!`)
         );
-    form.appendCharacterDropdownItems();
+    form.appendCharacterDropdownItems(loading.endLoadingAnimation());
   } else {
     alerts.displayAlert('error', 'You must sign in to save a character.');
   }

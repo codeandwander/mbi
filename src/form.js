@@ -42,7 +42,7 @@ export function setFormStep(stepButtonID) {
 }
 
 //refactor this function to display them in the tabs
-export function appendCharacterDropdownItems() {
+export function appendCharacterDropdownItems(callback) {
   let userEmail = snipcart.getUserEmail();
   let characterList = airtable.getUserCharacters(userEmail);
   let characterSelectorList = $('.character-selector-list');
@@ -72,7 +72,6 @@ export function appendCharacterDropdownItems() {
     });
 
     $('.w-dropdown-list div').click(function () {
-      console.log('hi');
       $('.dropdown').triggerHandler('w-close.w-dropdown');
     });
 
@@ -104,6 +103,7 @@ export function appendCharacterDropdownItems() {
       airtable.deleteCharacter(characterId, characterName);
       $(`#${characterId}`).parent().remove();
     });
+    callback && callback();
   });
 }
 

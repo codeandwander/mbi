@@ -1,5 +1,5 @@
 export function beginLoadingAnimation() {
-  document.getElementById('loading-screen').style.display = 'block';
+  document.getElementById('loading-screen').style.display = 'flex';
   //document.getElementsByTagName('html')[0].style.visibility = 'visible';
 }
 
