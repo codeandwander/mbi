@@ -72,7 +72,8 @@ function configureInputs() {
     pagination.buildPage(undefined, window.stepName);
   });
   renderCharacterPreview(function () {
-    //loading.endLoadingAnimation();
+    let userSignedIn = Snipcart.store.getState().customer.status === 'SignedIn';
+    userSignedIn ? '' : loading.endLoadingAnimation();
   });
 }
 
