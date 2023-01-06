@@ -79,6 +79,14 @@ function configureInputs() {
 
 // Save an existing character to a user profile
 export function saveCharacter() {
+  // check if user is signed in
+  let userSignedIn = Snipcart.store.getState().customer.status === 'SignedIn';
+
+  if (!userSignedIn) {
+    alerts.displayAlert('error', 'You must sign in to save a character.');
+    return;
+  }
+
   loading.beginLoadingAnimation();
   // validate inputs
   let heroNameInput = $('#hero-name-input').val();
@@ -88,26 +96,18 @@ export function saveCharacter() {
     return;
   }
 
-  // check if user is signed in
-  let userSignedIn = Snipcart.store.getState().customer.status === 'SignedIn';
+  let currentCharacterId = sessionStorage.getItem('currentCharacterId');
+  sessionStorage.setItem('currentCharacterName', heroNameInput);
 
-  // if not, tell them they need to sign in and redirect to login page
-  if (userSignedIn) {
-    let currentCharacterId = sessionStorage.getItem('currentCharacterId');
-    sessionStorage.setItem('currentCharacterName', heroNameInput);
-
-    // pass displayAlert callback to addCharacter/updateCharacter
-    currentCharacterId === null
-      ? airtable.addCharacter(
-          alerts.displayAlert('success', `${heroNameInput} was saved successfully!`)
-        )
-      : airtable.updateCharacter(
-          alerts.displayAlert('success', `${heroNameInput} was saved successfully!`)
-        );
-    form.appendCharacterDropdownItems(loading.endLoadingAnimation());
-  } else {
-    alerts.displayAlert('error', 'You must sign in to save a character.');
-  }
+  // pass displayAlert callback to addCharacter/updateCharacter
+  currentCharacterId === null
+    ? airtable.addCharacter(
+        alerts.displayAlert('success', `${heroNameInput} was saved successfully!`)
+      )
+    : airtable.updateCharacter(
+        alerts.displayAlert('success', `${heroNameInput} was saved successfully!`)
+      );
+  form.appendCharacterDropdownItems(loading.endLoadingAnimation);
 }
 
 // Randomise character
