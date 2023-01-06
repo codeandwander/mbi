@@ -188,7 +188,6 @@ window.Webflow.push(() => {
   $('.save-character-button').click(function (e) {
     e.stopPropagation();
     e.preventDefault();
-    loading.beginLoadingAnimation();
     character.saveCharacter();
   });
 

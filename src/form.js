@@ -53,7 +53,9 @@ export function appendCharacterDropdownItems(callback) {
   characterDropdownList.empty();
 
   characterList.then((result) => {
-    $.each(result, function () {
+    var itemsProcessed = 0;
+
+    $.each(result, function (index) {
       var $wrapper = $('<div/>', { class: 'character-list-item-container' }),
         $item = $('<div/>', {
           class: 'character-list-item',
@@ -69,6 +71,12 @@ export function appendCharacterDropdownItems(callback) {
       $wrapper.append($deleteBtn);
       $wrapper.clone().appendTo(characterSelectorList);
       $wrapper.clone().appendTo(characterDropdownList);
+
+      itemsProcessed++;
+
+      if (itemsProcessed === result.length) {
+        callback && callback();
+      }
     });
 
     $('.w-dropdown-list div').click(function () {
@@ -103,7 +111,6 @@ export function appendCharacterDropdownItems(callback) {
       airtable.deleteCharacter(characterId, characterName);
       $(`#${characterId}`).parent().remove();
     });
-    callback && callback();
   });
 }
 
