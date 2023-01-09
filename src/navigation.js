@@ -5,6 +5,8 @@ export function navigateToCharacterSelection() {
   $('.character-builder-container').show();
   $('.book-preview-container').hide();
   $('.basket-confirmation-container').hide();
+  var container = document.getElementById('character-builder-container');
+  container.scrollIntoView();
 }
 
 export function navigateToBookSelection() {
@@ -15,6 +17,8 @@ export function navigateToBookSelection() {
   $('.character-builder-container').hide();
   $('.book-preview-container').hide();
   $('.basket-confirmation-container').hide();
+  var container = document.getElementById('book-selector-container');
+  container.scrollIntoView();
 }
 
 export function navigateToPreviewSection() {
@@ -25,6 +29,8 @@ export function navigateToPreviewSection() {
   $('.character-builder-container').hide();
   $('.book-preview-container').show();
   $('.basket-confirmation-container').hide();
+  var container = document.getElementById('book-preview-container');
+  container.scrollIntoView();
 }
 
 export function navigateToBasketConfirmation() {
@@ -35,4 +41,6 @@ export function navigateToBasketConfirmation() {
   $('.character-builder-container').hide();
   $('.book-preview-container').hide();
   $('.basket-confirmation-container').show();
+  var container = document.getElementById('basket-confirmation-container');
+  container.scrollIntoView();
 }

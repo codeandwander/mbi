@@ -405,7 +405,13 @@ window.Webflow.push(() => {
     $('.book-small-list-container').hide();
     $('.book-large-container').each(function () {
       const expectedId = 'large-' + selectedBook;
-      $(this).attr('id') === expectedId ? $(this).show() : $(this).hide();
+      if ($(this).attr('id') === expectedId) {
+        $(this).show();
+        var container = document.getElementById($(this).attr('id'));
+        container.scrollIntoView();
+      } else {
+        $(this).hide();
+      }
     });
   });
 
