@@ -43,6 +43,10 @@ export function configureCharacter(fields) {
 
   const splitStyleColour = fields['HAIR'].split('-');
   const splitSidekickColour = fields['SIDEKICK'].split('-');
+  const specialItems = fields['SPECIAL'] ? fields['SPECIAL'].split(',') : [];
+
+  // removes all existing checked special items
+  $('input[name="special"]:checkbox').removeAttr('checked');
 
   // Character Creation
   $('input[value=' + splitStyleColour[1] + ']').prop('checked', true);
@@ -52,7 +56,16 @@ export function configureCharacter(fields) {
   $('input[value=' + fields['COSTUME'] + ']').prop('checked', true);
   $('input[value=' + fields['MASK'] + ']').prop('checked', true);
   $('input[value=' + fields['CAPE'] + ']').prop('checked', true);
-  $('input[value=' + fields['SPECIAL'] + ']').prop('checked', true);
+
+  if (specialItems) {
+    specialItems.forEach((item) => {
+      $('input[value=' + item + ']').prop('checked', true);
+      $('input[value=' + item + ']')
+        .parent()
+        .find('.w-checkbox-input')
+        .addClass('w--redirected-checked');
+    });
+  }
   $('input[value=' + fields['SIDEKICK'] + ']').prop('checked', true);
   $('input[value=sk-' + splitSidekickColour[1] + ']').prop('checked', true);
   $('input[value=' + fields['COVER_COLOUR'] + ']').prop('checked', true);
@@ -125,6 +138,8 @@ export function randomiseCharacter() {
   const randomSidekick = form.getRandomIndex('input[name="sidekick"]');
   const randomCover = form.getRandomIndex('input[name="cover"]');
 
+  $('input[name="special"]:checkbox').removeAttr('checked');
+
   $('input[name="hair-colour"]').eq(randomHairColour).prop('checked', true);
   $('input[name="hair-style"]').eq(randomHairStyle).prop('checked', true);
   $('input[name="Eye-Colour"]').eq(randomEyeColour).prop('checked', true);
@@ -133,6 +148,11 @@ export function randomiseCharacter() {
   $('input[name="mask"]').eq(randomMask).prop('checked', true);
   $('input[name="cape"]').eq(randomCape).prop('checked', true);
   $('input[name="special"]').eq(randomSpecial).prop('checked', true);
+  $('input[name="special"]')
+    .eq(randomSpecial)
+    .parent()
+    .find('.w-checkbox-input')
+    .addClass('w--redirected-checked');
   $('input[name="sidekick-colour"]').eq(randomSidekickColour).prop('checked', true);
   $('input[name="sidekick"]').eq(randomSidekick).prop('checked', true);
   $('input[name="cover"]').eq(randomCover).prop('checked', true);
@@ -211,9 +231,11 @@ export function renderCharacterPreview(callback) {
   }
 
   // Special
-  if (specialId) {
-    $('.special:visible').first().hide();
-    $('.' + specialId).show();
+  if (specialIds) {
+    $('.special:visible').hide();
+    specialIds.forEach((specialId) => {
+      $('.' + specialId).show();
+    });
   } else {
     const { length } = $('.special').length();
     const random = Math.floor(Math.random() * length);

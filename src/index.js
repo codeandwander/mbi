@@ -21,7 +21,7 @@ window.Webflow.push(() => {
   window.costumeId = '';
   window.maskId = '';
   window.capeId = '';
-  window.specialId = '';
+  window.specialIds = [];
   window.sidekickId = '';
   window.sidekickColour = '';
   window.sidekickColourId = sidekickId + '-' + sidekickColour;
@@ -159,7 +159,10 @@ window.Webflow.push(() => {
     costumeId = $('input[name=costume]:checked', '#character-creation-form').val().toLowerCase();
     maskId = $('input[name=mask]:checked', '#character-creation-form').val().toLowerCase();
     capeId = $('input[name=cape]:checked', '#character-creation-form').val().toLowerCase();
-    specialId = $('input[name=special]:checked', '#character-creation-form').val().toLowerCase();
+    specialIds = [];
+    $('input:checkbox[name=special]:checked').each(function () {
+      specialIds.push($(this).val());
+    });
     sidekickId = sidekickAndColourId.slice(0, 5);
     coverId = $('input[name=cover]:checked', '#character-creation-form').val().toLowerCase();
   };
@@ -320,7 +323,10 @@ window.Webflow.push(() => {
   });
 
   $('input[name=special]').change(function (e) {
-    specialId = $('input[name=special]:checked', '#character-creation-form').val().toLowerCase();
+    specialIds = [];
+    $('input:checkbox[name=special]:checked').each(function () {
+      specialIds.push($(this).val());
+    });
     character.renderCharacterPreview();
   });
 
