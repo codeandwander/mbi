@@ -84,6 +84,8 @@ function getPageOfSelectedItem(step) {
     currentCollectionList?.forEach((item, index) => {
       if (item.querySelector(`input[name="${inputName}"]`).checked) {
         indexOfSelectedItem = index;
+      } else {
+        indexOfSelectedItem = 0;
       }
     });
   }
