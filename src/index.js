@@ -120,7 +120,7 @@ window.Webflow.push(() => {
     });
   });
 
-  const masterplan = new MasterPlan(document.getElementById('masterplan'), {
+  window.masterplan = new MasterPlan(document.getElementById('masterplan'), {
     clientID: '5140',
     jobID: window.currentPreviewId,
     theme: 'light',
