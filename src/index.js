@@ -120,21 +120,21 @@ window.Webflow.push(() => {
     });
   });
 
-  window.masterplan = new MasterPlan(document.getElementById('masterplan'), {
-    clientID: '5140',
-    jobID: window.currentPreviewId,
-    theme: 'light',
-    embedType: 'frame',
-    thumbWidth: '300',
-    hideNavBar: true,
-    autoFullscreen: true,
-    showLoginLink: false,
-    clientNameLink: false,
-    showSpreadNums: false,
-    customCss: {
-      nestedToc: true,
-    },
-  });
+  // window.masterplan = new MasterPlan(document.getElementById('masterplan'), {
+  //   clientID: '5140',
+  //   jobID: window.currentPreviewId,
+  //   theme: 'light',
+  //   embedType: 'frame',
+  //   thumbWidth: '300',
+  //   hideNavBar: true,
+  //   autoFullscreen: true,
+  //   showLoginLink: false,
+  //   clientNameLink: false,
+  //   showSpreadNums: false,
+  //   customCss: {
+  //     nestedToc: true,
+  //   },
+  // });
 
   window.randomiseOrLoadCharacter = function () {
     //loading.beginLoadingAnimation();

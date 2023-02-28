@@ -82,7 +82,8 @@ export function postToAirTable() {
     .then((result) => {
       window.currentPreviewId = `${result[0]['fields']['PREVIEW_ID']}`;
 
-      window.masterplan = new MasterPlan(document.getElementById('masterplan'), {
+      // Generates MasterPlan book preview object
+      const masterplan = new MasterPlan(document.getElementById('masterplan'), {
         clientID: '5140',
         jobID: window.currentPreviewId,
         theme: 'light',
