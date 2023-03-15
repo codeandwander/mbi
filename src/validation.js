@@ -7,8 +7,8 @@ export function validInput(input, minLength, maxLength) {
     errors.push(`Your input must be between ${minLength} and ${maxLength} characters!`);
   }
 
-  if (!/^([a-zA-Z0-9 !,.?]+)$/.test(input)) {
-    errors.push('Invalid character detected! Allowed characters: [a-z, 0-9, !,.?]');
+  if (!/^([A-zÀ-ÿ0-9 !,.?-]+)$/.test(input)) {
+    errors.push('Invalid character detected! Allowed characters: [A-z, À-ÿ, 0-9, !,.?-]');
   }
 
   if (!Array.isArray(errors) || !errors.length) {
