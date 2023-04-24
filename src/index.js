@@ -268,7 +268,10 @@ window.Webflow.push(() => {
     });
     // sets outline colour to the background of the step button
     $(
-      `<style>[type=radio]:checked + img { box-shadow: 0px 0px 0px 5px ${hexColour};}</style>`
+      `<style>
+        [type=radio]:checked + img { box-shadow: 0px 0px 0px 5px ${hexColour};}
+        .pagination-up-arrow, .pagination-down-arrow { border-bottom-color: ${hexColour}; border-top-color: ${hexColour}; }
+      </style>`
     ).appendTo('head');
     $(`<style>[type=radio]:not(:checked) + img { box-shadow: none; }</style>`).appendTo('head');
     formStep = step;

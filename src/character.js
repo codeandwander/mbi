@@ -208,10 +208,14 @@ export function renderCharacterPreview(callback) {
 
   // Mask
   if (maskId) {
-    $('.mask:visible').first().hide();
-    $('.sidekick-mask:visible').first().hide();
-    $('.' + maskId).show();
-    $(`.${sidekickId}-${maskId}`).show();
+    if (maskId === 'msk000') {
+      $('.mask:visible').hide();
+    } else {
+      $('.mask:visible').first().hide();
+      $('.sidekick-mask:visible').first().hide();
+      $('.' + maskId).show();
+      $(`.${sidekickId}-${maskId}`).show();
+    }
   } else {
     const { length } = $('.mask').length;
     const random = Math.floor(Math.random() * length);
