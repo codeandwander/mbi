@@ -2,6 +2,30 @@ import * as alerts from '../src/alerts.js';
 import * as form from '../src/form.js';
 import * as snipcart from '../src/snipcart.js';
 
+// GET PREVIEW FOR CHARACTER
+export function getPreviewOfCharacter(characterId) {
+  var myHeaders = new Headers();
+  myHeaders.append('Content-Type', 'application/json');
+  var requestOptions = {
+    method: 'get',
+    headers: myHeaders,
+    redirect: 'follow',
+  };
+
+  const record = fetch(
+    `https://v1.nocodeapi.com/makebelieveme/airtable/nmeOnHAeFloOUpCL?tableName=Previews&filterByFormula=CHARACTER_ID="${characterId}"&t=${Date.now()}`,
+    requestOptions
+  )
+    .then((response) => response.text())
+    .then((result) => {
+      result = JSON.parse(result);
+      return result.records.slice(Math.max(result.records.length - 5, 0));
+    })
+    .catch((error) => console.log('error', error));
+
+  return record;
+}
+
 // GET ALL CHARACTERS FOR USER
 export function getUserCharacters(userEmail) {
   var myHeaders = new Headers();
@@ -52,7 +76,7 @@ export function getRecord(characterId) {
 }
 
 // Post Airtable Record
-export function postToAirTable() {
+export function postToAirTable(callback) {
   const testBody = [
     {
       // need to factor in log in character stuff
@@ -103,7 +127,9 @@ export function postToAirTable() {
         `https://hook.eu1.make.com/0kxggab30625jvpqkvviz6fo9dvxzryf?string=P-${encodeURIComponent(
           result[0]['fields']['RECORD_ID']
         )}-CHOSEN`
-      );
+      ).then((response) => {
+        callback && callback();
+      });
     })
     .catch((error) => console.log('error', error));
 }

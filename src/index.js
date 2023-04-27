@@ -92,6 +92,40 @@ window.Webflow.push(() => {
         });
       }
 
+      // User is on preview page
+      if (window.location.href.indexOf('preview') > -1) {
+        const params = new URLSearchParams(location.search);
+
+        if (params.get('characterId')) {
+          const airtablePoll = setInterval(() => {
+            const previewPromise = airtable.getPreviewOfCharacter(params.get('characterId'));
+
+            previewPromise.then((preview) => {
+              if (preview[0].fields['Preview Status']) {
+                clearInterval(airtablePoll);
+
+                document.getElementById('masterplan').innerHTML = '';
+                window.masterplan = new MasterPlan(document.getElementById('masterplan'), {
+                  clientID: '5140',
+                  jobID: window.currentPreviewId,
+                  theme: 'light',
+                  embedType: 'frame',
+                  thumbWidth: '300',
+                  hideNavBar: true,
+                  autoFullscreen: true,
+                  showLoginLink: false,
+                  clientNameLink: false,
+                  showSpreadNums: false,
+                  customCss: {
+                    nestedToc: true,
+                  },
+                });
+              }
+            });
+          }, 5000);
+        }
+      }
+
       // Pagination
       var resizeDelay = 200;
       var doResize = true;
@@ -119,22 +153,6 @@ window.Webflow.push(() => {
       });
     });
   });
-
-  // window.masterplan = new MasterPlan(document.getElementById('masterplan'), {
-  //   clientID: '5140',
-  //   jobID: window.currentPreviewId,
-  //   theme: 'light',
-  //   embedType: 'frame',
-  //   thumbWidth: '300',
-  //   hideNavBar: true,
-  //   autoFullscreen: true,
-  //   showLoginLink: false,
-  //   clientNameLink: false,
-  //   showSpreadNums: false,
-  //   customCss: {
-  //     nestedToc: true,
-  //   },
-  // });
 
   window.randomiseOrLoadCharacter = function () {
     //loading.beginLoadingAnimation();
@@ -384,7 +402,9 @@ window.Webflow.push(() => {
       : airtable.updateCharacter(
           alerts.displayAlert('success', `${$('#hero-name-input').val()} was saved successfully!`)
         );
+
     form.appendCharacterDropdownItems(loading.endLoadingAnimation);
+
     navigation.navigateToBookSelection();
   });
 
@@ -500,12 +520,19 @@ window.Webflow.push(() => {
     );
     $('.add-to-cart-btn').attr('data-item-custom3-value', JSON.stringify(currentCharacterObject));
 
-    airtable.postToAirTable();
-    airtable.updateCharacter();
+    airtable.postToAirTable(() => {
+      airtable.updateCharacter(() => {
+        let currentCharacterId = sessionStorage.getItem('currentCharacterId');
+
+        location.href = '/preview?characterId=' + currentCharacterId;
+      });
+    });
     // wait for response from circular software (this is where we will do the polling stuff)
 
+    // location.href = '/preview?characterId=' + currentCharacterId;
+
     // when response received, display preview
-    navigation.navigateToPreviewSection();
+    // navigation.navigateToPreviewSection();
   });
 
   $('.edit-character').click(function (e) {
