@@ -267,7 +267,7 @@ export function renderCharacterPreview(callback) {
   callback && callback();
 }
 
-export function loadCharacterPreviewItems() {
+export function loadCharacterPreviewItems(callback) {
   getCharacterItems()
     .then(addCharacterItemsToDOM)
     .then(form.setCharacterPreviewClasses)

@@ -3,7 +3,7 @@ import * as form from '../src/form.js';
 import * as snipcart from '../src/snipcart.js';
 
 // GET PREVIEW FOR CHARACTER
-export function getPreviewOfCharacter(characterId) {
+export function getPreviewOfCharacter(previewId) {
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
   var requestOptions = {
@@ -13,7 +13,7 @@ export function getPreviewOfCharacter(characterId) {
   };
 
   const record = fetch(
-    `https://v1.nocodeapi.com/makebelieveme/airtable/nmeOnHAeFloOUpCL?tableName=Previews&filterByFormula=CHARACTER_ID="${characterId}"&t=${Date.now()}`,
+    `https://v1.nocodeapi.com/makebelieveme/airtable/nmeOnHAeFloOUpCL?tableName=Previews&filterByFormula=PREVIEW_ID="${previewId}"&t=${Date.now()}`,
     requestOptions
   )
     .then((response) => response.text())
@@ -129,7 +129,7 @@ export function postToAirTable(callback) {
           result[0]['fields']['RECORD_ID']
         )}-CHOSEN`
       ).then((response) => {
-        callback && callback();
+        callback && callback(currentPreviewId);
       });
     })
     .catch((error) => console.log('error', error));

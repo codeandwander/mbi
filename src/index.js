@@ -60,6 +60,7 @@ window.Webflow.push(() => {
       // User is on character creation
       if (window.location.href.indexOf('character-creation') > -1) {
         Snipcart.events.on('customer.signedin', (customer) => {
+          console.log('customer signed in');
           $('.nav-login-btn').html('Profile');
           $('.select-character').show();
           $('.new-character-button').show();
@@ -74,6 +75,7 @@ window.Webflow.push(() => {
         });
 
         Snipcart.events.on('customer.signedout', (customer) => {
+          console.log('customer signed out');
           sessionStorage.clear();
           $('.nav-login-btn').html('Sign In');
           $('.select-character').hide();
@@ -84,7 +86,19 @@ window.Webflow.push(() => {
         });
 
         Snipcart.events.on('snipcart.initialized', (snipcartState) => {
-          navigation.navigateToCharacterSelection();
+          console.log('snipcart initialized');
+
+          const params = new URLSearchParams(location.search);
+          if (params.get('page')) {
+            if (params.get('page') === 'characterSelection') {
+              navigation.navigateToCharacterSelection();
+            }
+
+            if (params.get('page') === 'bookSelection') {
+              navigation.navigateToBookSelection();
+            }
+          }
+
           snipcart.toggleUiElements();
           form.setFormStep('#step-1-button');
           form.setInputValues();
@@ -98,9 +112,9 @@ window.Webflow.push(() => {
 
         const params = new URLSearchParams(location.search);
 
-        if (params.get('characterId')) {
+        if (params.get('id')) {
           function getPreview() {
-            const previewPromise = airtable.getPreviewOfCharacter(params.get('characterId'));
+            const previewPromise = airtable.getPreviewOfCharacter(params.get('id'));
 
             previewPromise.then((preview) => {
               if (preview[0].fields['Preview Status']) {
@@ -529,11 +543,9 @@ window.Webflow.push(() => {
     );
     $('.add-to-cart-btn').attr('data-item-custom3-value', JSON.stringify(currentCharacterObject));
 
-    airtable.postToAirTable(() => {
+    airtable.postToAirTable((id) => {
       airtable.updateCharacter(() => {
-        let currentCharacterId = sessionStorage.getItem('currentCharacterId');
-
-        location.href = '/preview?characterId=' + currentCharacterId;
+        location.href = '/preview?id=' + id;
       });
     });
     // wait for response from circular software (this is where we will do the polling stuff)
@@ -546,12 +558,14 @@ window.Webflow.push(() => {
 
   $('.edit-character').click(function (e) {
     e.preventDefault();
-    navigation.navigateToCharacterSelection();
+    location.href = '/character-creation?page=characterSelection';
+    // navigation.navigateToCharacterSelection();
   });
 
   $('.select-story').click(function (e) {
     e.preventDefault();
-    navigation.navigateToBookSelection();
+    location.href = '/character-creation?page=bookSelection';
+    // navigation.navigateToBookSelection();
   });
 
   /*
