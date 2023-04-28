@@ -104,24 +104,25 @@ export function postToAirTable(callback) {
   )
     .then((response) => response.json())
     .then((result) => {
-      window.currentPreviewId = `${result[0]['fields']['PREVIEW_ID']}`;
+      const currentPreviewId = `${result[0]['fields']['PREVIEW_ID']}`;
+      localStorage.setItem('currentPreviewId', currentPreviewId);
 
-      // Generates MasterPlan book preview object
-      const masterplan = new MasterPlan(document.getElementById('masterplan'), {
-        clientID: '5140',
-        jobID: window.currentPreviewId,
-        theme: 'light',
-        embedType: 'frame',
-        thumbWidth: '300',
-        hideNavBar: true,
-        autoFullscreen: true,
-        showLoginLink: false,
-        clientNameLink: false,
-        showSpreadNums: false,
-        customCss: {
-          nestedToc: true,
-        },
-      });
+      // // Generates MasterPlan book preview object
+      // const masterplan = new MasterPlan(document.getElementById('masterplan'), {
+      //   clientID: '5140',
+      //   jobID: window.currentPreviewId,
+      //   theme: 'light',
+      //   embedType: 'frame',
+      //   thumbWidth: '300',
+      //   hideNavBar: true,
+      //   autoFullscreen: true,
+      //   showLoginLink: false,
+      //   clientNameLink: false,
+      //   showSpreadNums: false,
+      //   customCss: {
+      //     nestedToc: true,
+      //   },
+      // });
 
       fetch(
         `https://hook.eu1.make.com/0kxggab30625jvpqkvviz6fo9dvxzryf?string=P-${encodeURIComponent(

@@ -3,11 +3,11 @@ import * as alerts from '../src/alerts.js';
 import * as character from '../src/character.js';
 import * as form from '../src/form.js';
 import * as loading from '../src/loading.js';
-import * as localStorage from '../src/localStorage.js';
 import * as navigation from '../src/navigation.js';
 import * as pagination from '../src/pagination.js';
 import * as snipcart from '../src/snipcart.js';
 import * as validation from '../src/validation.js';
+import * as localStorageUtils from './localStorageUtils.js';
 
 window.Webflow ||= [];
 window.Webflow.push(() => {
@@ -94,10 +94,12 @@ window.Webflow.push(() => {
 
       // User is on preview page
       if (window.location.href.indexOf('preview') > -1) {
+        form.displayBookControls();
+
         const params = new URLSearchParams(location.search);
 
         if (params.get('characterId')) {
-          const airtablePoll = setInterval(() => {
+          function getPreview() {
             const previewPromise = airtable.getPreviewOfCharacter(params.get('characterId'));
 
             previewPromise.then((preview) => {
@@ -107,7 +109,7 @@ window.Webflow.push(() => {
                 document.getElementById('masterplan').innerHTML = '';
                 window.masterplan = new MasterPlan(document.getElementById('masterplan'), {
                   clientID: '5140',
-                  jobID: window.currentPreviewId,
+                  jobID: preview[0].fields['PREVIEW_ID'],
                   theme: 'light',
                   embedType: 'frame',
                   thumbWidth: '300',
@@ -122,6 +124,12 @@ window.Webflow.push(() => {
                 });
               }
             });
+          }
+
+          getPreview();
+
+          const airtablePoll = setInterval(() => {
+            getPreview();
           }, 5000);
         }
       }
@@ -430,6 +438,7 @@ window.Webflow.push(() => {
   $('.book-container').click(function (e) {
     e.preventDefault();
     selectedBook = $(this).prop('id').slice(0, -5);
+    localStorage.setItem('selectedBook', selectedBook);
 
     $('.book-small-list-container').hide();
     $('.book-large-container').each(function () {
@@ -490,7 +499,7 @@ window.Webflow.push(() => {
       }
     }
 
-    localStorage.setSessionId();
+    localStorageUtils.setSessionId();
     form.displayBookControls();
 
     // create character object
