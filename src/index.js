@@ -110,44 +110,68 @@ window.Webflow.push(() => {
 
       // User is on preview page
       if (window.location.href.indexOf('preview') > -1) {
-        form.displayBookControls();
-
         const params = new URLSearchParams(location.search);
+        const previewPromise = airtable.getPreviewOfCharacter(params.get('id'));
 
-        if (params.get('id')) {
-          function getPreview() {
-            const previewPromise = airtable.getPreviewOfCharacter(params.get('id'));
+        loading.beginLoadingAnimation();
 
+        Snipcart.events.on('snipcart.initialized', (snipcartState) => {
+          snipcart.toggleUiElements();
+          form.displayBookControls();
+
+          if (params.get('id')) {
             previewPromise.then((preview) => {
-              if (preview[0].fields['Preview Status']) {
-                clearInterval(airtablePoll);
+              loading.endLoadingAnimation();
 
-                document.getElementById('masterplan').innerHTML = '';
-                window.masterplan = new MasterPlan(document.getElementById('masterplan'), {
-                  clientID: '5140',
-                  jobID: preview[0].fields['PREVIEW_ID'],
-                  theme: 'light',
-                  embedType: 'frame',
-                  thumbWidth: '300',
-                  hideNavBar: true,
-                  autoFullscreen: true,
-                  showLoginLink: false,
-                  clientNameLink: false,
-                  showSpreadNums: false,
-                  customCss: {
-                    nestedToc: true,
-                  },
-                });
-              }
+              $('#email-preview-button').click(function () {
+                let userSignedIn = Snipcart.store.getState().customer.status === 'SignedIn';
+
+                if (userSignedIn) {
+                  alerts.displayAlert('success', `Preview successfully sent to email`);
+
+                  fetch(
+                    `https://hook.eu1.make.com/0kxggab30625jvpqkvviz6fo9dvxzryf?string=F-${encodeURIComponent(
+                      preview[0]['fields']['RECORD_ID']
+                    )}-CHOSEN`
+                  ).then((response) => {
+                    console.log(response);
+                  });
+                } else {
+                  alerts.displayAlert('error', 'You must sign in to save a character.');
+                }
+              });
             });
+
+            function pollPreviewStatus() {
+              previewPromise.then((preview) => {
+                if (preview[0].fields['Preview Status']) {
+                  clearInterval(airtablePoll);
+
+                  document.getElementById('masterplan').innerHTML = '';
+                  window.masterplan = new MasterPlan(document.getElementById('masterplan'), {
+                    clientID: '5140',
+                    jobID: preview[0].fields['PREVIEW_ID'],
+                    theme: 'light',
+                    embedType: 'frame',
+                    thumbWidth: '300',
+                    hideNavBar: true,
+                    autoFullscreen: true,
+                    showLoginLink: false,
+                    clientNameLink: false,
+                    showSpreadNums: false,
+                    customCss: {
+                      nestedToc: true,
+                    },
+                  });
+                }
+              });
+            }
+
+            const airtablePoll = setInterval(() => {
+              pollPreviewStatus();
+            }, 5000);
           }
-
-          getPreview();
-
-          const airtablePoll = setInterval(() => {
-            getPreview();
-          }, 5000);
-        }
+        });
       }
 
       // Pagination
@@ -569,24 +593,16 @@ window.Webflow.push(() => {
         location.href = '/preview?id=' + id;
       });
     });
-    // wait for response from circular software (this is where we will do the polling stuff)
-
-    // location.href = '/preview?characterId=' + currentCharacterId;
-
-    // when response received, display preview
-    // navigation.navigateToPreviewSection();
   });
 
   $('.edit-character').click(function (e) {
     e.preventDefault();
     location.href = '/character-creation?page=characterSelection';
-    // navigation.navigateToCharacterSelection();
   });
 
   $('.select-story').click(function (e) {
     e.preventDefault();
     location.href = '/character-creation?page=bookSelection';
-    // navigation.navigateToBookSelection();
   });
 
   /*
