@@ -133,7 +133,7 @@ export function randomiseCharacter() {
   const randomCostume = form.getRandomIndex('input[name="costume"]');
   const randomMask = form.getRandomIndex('input[name="mask"]');
   const randomCape = form.getRandomIndex('input[name="cape"]');
-  const randomSpecial = form.getRandomIndex('input[name="special"]');
+  // const randomSpecial = form.getRandomIndex('input[name="special"]');
   const randomSidekickColour = form.getRandomIndex('input[name="sidekick-colour"]');
   const randomSidekick = form.getRandomIndex('input[name="sidekick"]');
   const randomCover = form.getRandomIndex('input[name="cover"]');
@@ -147,9 +147,9 @@ export function randomiseCharacter() {
   $('input[name="costume"]').eq(randomCostume).prop('checked', true);
   $('input[name="mask"]').eq(randomMask).prop('checked', true);
   $('input[name="cape"]').eq(randomCape).prop('checked', true);
-  $('input[name="special"]').eq(randomSpecial).prop('checked', true);
+  $('input[name="special"]').eq(0).prop('checked', true);
   $('input[name="special"]')
-    .eq(randomSpecial)
+    .eq(0)
     .parent()
     .find('.w-checkbox-input')
     .addClass('w--redirected-checked');
@@ -240,10 +240,6 @@ export function renderCharacterPreview(callback) {
     specialIds.forEach((specialId) => {
       $('.' + specialId).show();
     });
-  } else {
-    const { length } = $('.special').length();
-    const random = Math.floor(Math.random() * length);
-    $('.special').eq(random).show();
   }
 
   if (sidekickColourId) {

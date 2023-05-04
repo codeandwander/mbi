@@ -61,6 +61,7 @@ window.Webflow.push(() => {
       if (window.location.href.indexOf('character-creation') > -1) {
         Snipcart.events.on('customer.signedin', (customer) => {
           console.log('customer signed in');
+
           $('.nav-login-btn').html('Profile');
           $('.select-character').show();
           $('.new-character-button').show();
@@ -76,6 +77,7 @@ window.Webflow.push(() => {
 
         Snipcart.events.on('customer.signedout', (customer) => {
           console.log('customer signed out');
+
           sessionStorage.clear();
           $('.nav-login-btn').html('Sign In');
           $('.select-character').hide();
@@ -371,6 +373,25 @@ window.Webflow.push(() => {
       specialIds.push($(this).val());
     });
     character.renderCharacterPreview();
+  });
+
+  $('input[name=special]').click(function (e) {
+    if ($(this).val() === 'sp000') {
+      $('.special:visible').hide();
+      $('input:checkbox[name=special]:not([value=sp000])').prop('checked', false);
+      $('input:checkbox[name=special]:not([value=sp000])')
+        .parent()
+        .find('.w-checkbox-input')
+        .removeClass('w--redirected-checked');
+    } else {
+      if ($('input:checkbox[name=special][value=sp000]').is(':checked')) {
+        $('input:checkbox[name=special][value=sp000]').prop('checked', false);
+        $('input:checkbox[name=special][value=sp000]')
+          .parent()
+          .find('.w-checkbox-input')
+          .removeClass('w--redirected-checked');
+      }
+    }
   });
 
   $('input[name="sidekick-colour"]').change(function (e) {
