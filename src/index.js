@@ -143,6 +143,8 @@ window.Webflow.push(() => {
             });
 
             function pollPreviewStatus() {
+              const previewPromise = airtable.getPreviewOfCharacter(params.get('id'));
+
               previewPromise.then((preview) => {
                 if (preview[0].fields['Preview Status']) {
                   clearInterval(airtablePoll);
