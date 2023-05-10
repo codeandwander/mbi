@@ -166,11 +166,11 @@ export function addCharacter(callback) {
   )
     .then((response) => response.json())
     .then((result) => {
-      fetch(
-        `https://hook.eu1.make.com/0kxggab30625jvpqkvviz6fo9dvxzryf?string=C-${encodeURIComponent(
-          result[0]['fields']['RECORD_ID']
-        )}-CREATED`
-      );
+      // fetch(
+      //   `https://hook.eu1.make.com/0kxggab30625jvpqkvviz6fo9dvxzryf?string=C-${encodeURIComponent(
+      //     result[0]['fields']['RECORD_ID']
+      //   )}-CREATED`
+      // );
       sessionStorage.setItem('currentCharacterId', result[0]['fields']['RECORD_ID']);
       callback && callback();
       return result[0];
@@ -214,11 +214,11 @@ export function updateCharacter(callback) {
   )
     .then((response) => response.json())
     .then((result) => {
-      fetch(
-        `https://hook.eu1.make.com/0kxggab30625jvpqkvviz6fo9dvxzryf?string=C-${sessionStorage.getItem(
-          encodeURIComponent('currentCharacterId')
-        )}-MODIFIED`
-      );
+      // fetch(
+      //   `https://hook.eu1.make.com/0kxggab30625jvpqkvviz6fo9dvxzryf?string=C-${sessionStorage.getItem(
+      //     encodeURIComponent('currentCharacterId')
+      //   )}-MODIFIED`
+      // );
       callback && callback();
     })
     .catch((error) => console.log('error', error));
