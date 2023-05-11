@@ -142,7 +142,10 @@ window.Webflow.push(() => {
                 let userSignedIn = Snipcart.store.getState().customer.status === 'SignedIn';
 
                 if (userSignedIn) {
-                  alerts.displayAlert('success', `Preview successfully sent to email`);
+                  alerts.displayAlert(
+                    'success',
+                    `We will contact you by email when your full preview is ready`
+                  );
 
                   fetch(
                     `https://hook.eu1.make.com/0kxggab30625jvpqkvviz6fo9dvxzryf?string=F-${encodeURIComponent(
@@ -159,36 +162,21 @@ window.Webflow.push(() => {
               loading.endLoadingAnimation();
             });
 
-            // function pollPreviewStatus() {
-            //   const previewPromise = airtable.getPreviewOfCharacter(params.get('id'));
+            function pollPreviewStatus() {
+              const previewPromise = airtable.getPreviewOfCharacter(params.get('id'));
 
-            //   previewPromise.then((preview) => {
-            //     if (preview[0].fields['Preview Status']) {
-            //       clearInterval(airtablePoll);
+              previewPromise.then((preview) => {
+                if (preview[0].fields['Preview Status'] === '3-Full Preview') {
+                  clearInterval(airtablePoll);
 
-            //       document.getElementById('masterplan').innerHTML = '';
-            //       window.masterplan = new MasterPlan(document.getElementById('masterplan'), {
-            //         clientID: '5140',
-            //         jobID: preview[0].fields['PREVIEW_ID'],
-            //         theme: 'light',
-            //         embedType: 'frame',
-            //         thumbWidth: '300',
-            //         hideNavBar: true,
-            //         autoFullscreen: true,
-            //         showLoginLink: false,
-            //         clientNameLink: false,
-            //         showSpreadNums: false,
-            //         customCss: {
-            //           nestedToc: true,
-            //         },
-            //       });
-            //     }
-            //   });
-            // }
+                  $('#email-preview-button').hide();
+                }
+              });
+            }
 
-            // const airtablePoll = setInterval(() => {
-            //   pollPreviewStatus();
-            // }, 5000);
+            const airtablePoll = setInterval(() => {
+              pollPreviewStatus();
+            }, 4000);
           }
         });
       }
