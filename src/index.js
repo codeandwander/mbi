@@ -636,3 +636,500 @@ window.Webflow.push(() => {
     navigation.navigateToCharacterSelection();
   });
 });
+
+/*
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ ************* DUPLICATE CODE *************
+ */
+window.initCharacterCreation = function () {
+  const userSignedIn = Snipcart.store.getState().customer.status === 'SignedIn';
+
+  Snipcart.events.on('customer.signedin', (customer) => {
+    console.log('customer signed in');
+
+    $('.nav-login-btn').html('Profile');
+    $('.select-character').show();
+    $('.new-character-button').show();
+    if (window.innerWidth <= 991) {
+      $('.character-selector-container-mobile').show();
+      $('.character-selector-container').hide();
+    } else {
+      $('.character-selector-container-mobile').hide();
+      $('.character-selector-container').show();
+    }
+    window.randomiseOrLoadCharacter();
+  });
+
+  Snipcart.events.on('customer.signedout', (customer) => {
+    console.log('customer signed out');
+
+    sessionStorage.clear();
+    $('.nav-login-btn').html('Sign In');
+    $('.select-character').hide();
+    $('.new-character-button').hide();
+    $('.character-selector-container-mobile').hide();
+    $('.character-selector-container').hide();
+    window.randomiseOrLoadCharacter();
+  });
+
+  console.log('snipcart initialized');
+
+  const params = new URLSearchParams(location.search);
+  if (params.get('page')) {
+    if (params.get('page') === 'characterSelection') {
+      navigation.navigateToCharacterSelection();
+    }
+
+    if (params.get('page') === 'bookSelection') {
+      navigation.navigateToBookSelection();
+    }
+  }
+
+  snipcart.toggleUiElements();
+  form.setFormStep('#step-1-button');
+  form.setInputValues();
+  character.loadCharacterPreviewItems();
+
+  // const params = new URLSearchParams(location.search);
+  // if (params.get('page')) {
+  //   if (params.get('page') === 'characterSelection') {
+  //     navigation.navigateToCharacterSelection();
+  //   }
+
+  //   if (params.get('page') === 'bookSelection') {
+  //     navigation.navigateToBookSelection();
+  //   }
+  // }
+
+  // Pagination
+  var resizeDelay = 200;
+  var doResize = true;
+  var resizer = function () {
+    if (doResize) {
+      window.innerWidth <= 767 ? (window.numberPerPage = 3) : (window.numberPerPage = 9);
+      pagination.buildPage(undefined, window.stepName);
+      doResize = false;
+
+      if (userSignedIn) {
+        if (window.innerWidth <= 991) {
+          $('.character-selector-container-mobile').show();
+          $('.character-selector-container').hide();
+        } else {
+          $('.character-selector-container-mobile').hide();
+          $('.character-selector-container').show();
+        }
+      }
+    }
+  };
+  var resizerInterval = setInterval(resizer, resizeDelay);
+  resizer();
+  $(window).resize(function () {
+    doResize = true;
+  });
+
+  /*
+   * PAGINATION BUTTONS
+   */
+
+  $('.pagination-down-arrow').click(function () {
+    if (window.currentPage === window.numberOfPages) return;
+    window.currentPage += 1;
+    pagination.buildPage(window.currentPage, window.stepName);
+  });
+
+  $('.pagination-up-arrow').click(function () {
+    if (window.currentPage === 1) return;
+    window.currentPage -= 1;
+    pagination.buildPage(window.currentPage, window.stepName);
+  });
+
+  /*
+   * JQUERY FUNCTIONS
+   */
+
+  // Save Character Button Click
+  $('.save-character-button').click(function (e) {
+    e.stopPropagation();
+    e.preventDefault();
+    character.saveCharacter();
+  });
+
+  // New Character Button Click
+  $('.new-character-button, .new-character-button-large').click(function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    navigation.navigateToCharacterSelection();
+    character.randomiseCharacter();
+  });
+
+  // Checkout Button Click
+  $('.checkout-button').click(function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!window.location.hash) {
+      window.location.hash = '#/checkout';
+    }
+  });
+
+  /*
+   * FORM STEP FUNCTIONS
+   */
+
+  // Form Step 1 Button
+  function goToFormStep(step, e) {
+    e.preventDefault();
+    let hexColour;
+
+    // Set outline colour of step
+    switch (step) {
+      case '1':
+        hexColour = '#F080B2';
+        window.stepName = 'hair';
+        pagination.buildPage(undefined, 'hair');
+        break;
+      case '2':
+        hexColour = '#01AFDA';
+        break;
+      case '3':
+        hexColour = '#77B82A';
+        window.stepName = 'skin';
+        pagination.buildPage(undefined, 'skin');
+        break;
+      case '4':
+        hexColour = '#FCD100';
+        break;
+      case '5':
+        hexColour = '#E84E10';
+        window.stepName = 'mask';
+        pagination.buildPage(undefined, 'mask');
+        break;
+      case '6':
+        hexColour = '#01A187';
+        break;
+      case '7':
+        hexColour = '#E30613';
+        window.stepName = 'special';
+        pagination.buildPage(undefined, 'special');
+        break;
+      case '8':
+        hexColour = '#E30F6B';
+        break;
+      case '9':
+        hexColour = '#0072BB';
+        break;
+    }
+
+    form.setFormStep(`#step-${step}-button`);
+    $(`.form-step-${step}-container`).fadeIn('slow');
+    $(`.form-step-${formStep}-container`).css({
+      display: 'none',
+    });
+    // sets outline colour to the background of the step button
+    $(
+      `<style>
+        [type=radio]:checked + img { box-shadow: 0px 0px 0px 5px ${hexColour};}
+        .pagination-up-arrow, .pagination-down-arrow { border-bottom-color: ${hexColour}; border-top-color: ${hexColour}; }
+      </style>`
+    ).appendTo('head');
+    $(`<style>[type=radio]:not(:checked) + img { box-shadow: none; }</style>`).appendTo('head');
+    formStep = step;
+  }
+  $('.step-button').click(function (e) {
+    const clickedStep = $(this).attr('id').match(/(\d+)/)[0];
+
+    goToFormStep(clickedStep, e);
+  });
+
+  /*
+   * On Change Functions
+   */
+
+  /* On colour change, select the relevant hairstyle and colour */
+  $('input[name="hair-colour"]').change(function (e) {
+    form.displaySelectedColours();
+    form.checkSelectedHairstyle();
+    form.updateStyleColourIds();
+    character.renderCharacterPreview();
+  });
+
+  $('input[name=hair-style]').change(function (e) {
+    getSelectedStyles();
+    form.updateStyleColourIds();
+    character.renderCharacterPreview();
+  });
+
+  $('input[name=Eye-Colour]').change(function (e) {
+    eyesId = $('input[name=Eye-Colour]:checked', '#character-creation-form').val().toLowerCase();
+    character.renderCharacterPreview();
+  });
+
+  $('input[name=skin-tone]').change(function (e) {
+    skinToneId = $('input[name=skin-tone]:checked', '#character-creation-form').val().toLowerCase();
+    character.renderCharacterPreview();
+  });
+
+  $('input[name=costume]').change(function (e) {
+    costumeId = $('input[name=costume]:checked', '#character-creation-form').val().toLowerCase();
+    character.renderCharacterPreview();
+  });
+
+  $('input[name=mask]').change(function (e) {
+    maskId = $('input[name=mask]:checked', '#character-creation-form').val().toLowerCase();
+    character.renderCharacterPreview();
+  });
+
+  $('input[name=cape]').change(function (e) {
+    capeId = $('input[name=cape]:checked', '#character-creation-form').val().toLowerCase();
+    character.renderCharacterPreview();
+  });
+
+  $('input[name=special]').change(function (e) {
+    specialIds = [];
+    $('input:checkbox[name=special]:checked').each(function () {
+      specialIds.push($(this).val());
+    });
+    character.renderCharacterPreview();
+  });
+
+  $('input[name=special]').click(function (e) {
+    if ($(this).val() === 'sp000') {
+      $('.special:visible').hide();
+      $('input:checkbox[name=special]:not([value=sp000])').prop('checked', false);
+      $('input:checkbox[name=special]:not([value=sp000])')
+        .parent()
+        .find('.w-checkbox-input')
+        .removeClass('w--redirected-checked');
+    } else {
+      if ($('input:checkbox[name=special][value=sp000]').is(':checked')) {
+        $('input:checkbox[name=special][value=sp000]').prop('checked', false);
+        $('input:checkbox[name=special][value=sp000]')
+          .parent()
+          .find('.w-checkbox-input')
+          .removeClass('w--redirected-checked');
+      }
+    }
+  });
+
+  $('input[name="sidekick-colour"]').change(function (e) {
+    form.displaySelectedColours();
+    form.checkSelectedSidekick();
+    form.updateStyleColourIds();
+    character.renderCharacterPreview();
+  });
+
+  $('input[name=sidekick]').change(function (e) {
+    getSelectedStyles();
+    form.updateStyleColourIds();
+    character.renderCharacterPreview();
+  });
+
+  $('input[name=cover]').change(function (e) {
+    coverId = $('input[name=cover]:checked', '#character-creation-form').val().toLowerCase();
+    character.renderCharacterPreview();
+  });
+
+  $('textarea#dedication').change(function () {
+    window.dedicationMessage = $(this).val();
+  });
+
+  $('input[name=pronoun]').change(function () {
+    window.pronouns = $(this).val();
+  });
+
+  $('input[name=language]').change(function () {
+    window.language = $(this).val();
+  });
+
+  /*
+   *	Pick a Book
+   */
+
+  $('.pick-a-book').click(function (e) {
+    e.preventDefault();
+    let validInput = validation.validInput($('input[name=fname]').val(), 2, 50);
+
+    if (!validInput) {
+      return;
+    }
+
+    let currentCharacterId = sessionStorage.getItem('currentCharacterId');
+    sessionStorage.setItem('currentCharacterName', $('#hero-name-input').val());
+    currentCharacterId === null
+      ? airtable.addCharacter(
+          alerts.displayAlert('success', `${$('#hero-name-input').val()} was saved successfully!`)
+        )
+      : airtable.updateCharacter(
+          alerts.displayAlert('success', `${$('#hero-name-input').val()} was saved successfully!`)
+        );
+
+    form.appendCharacterDropdownItems(loading.endLoadingAnimation);
+
+    navigation.navigateToBookSelection();
+  });
+
+  $('.edit-character-button').click(function (e) {
+    e.preventDefault();
+
+    $('.character-builder-container').show();
+    $('.book-selector-container').hide();
+  });
+
+  $('.basket-confirmation_book-item').each(function () {
+    // lowercase and hyphenates an id, adds to each book item
+    const id = $(this).closest('div').find('.book-title').html().toLowerCase().replace(/ /g, '-');
+    $(this).prop('id', id + '-basket-book');
+  });
+
+  $('.book-container').each(function () {
+    // lowercase and hyphenates an id, adds to each book item
+    const id = $(this).closest('div').find('.book-title').html().toLowerCase().replace(/ /g, '-');
+    $(this).prop('id', id + '-book');
+  });
+
+  $('.book-container').click(function (e) {
+    e.preventDefault();
+    selectedBook = $(this).prop('id').slice(0, -5);
+    localStorage.setItem('selectedBook', selectedBook);
+
+    $('.book-small-list-container').hide();
+    $('.book-large-container').each(function () {
+      const expectedId = 'large-' + selectedBook;
+      if ($(this).attr('id') === expectedId) {
+        $(this).show();
+        var container = document.getElementById($(this).attr('id'));
+        container.scrollIntoView();
+      } else {
+        $(this).hide();
+      }
+    });
+  });
+
+  $('.book-large-container').each(function () {
+    // lowercase and hyphenates an id, adds to each book item
+    const id = $(this).closest('div').find('.book-title').html().toLowerCase().replace(/ /g, '-');
+    $(this).prop('id', 'large-' + id);
+  });
+
+  $('.story-back-button').click(function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    $('.book-small-list-container').css('display', 'flex');
+    $('.book-large-container').hide();
+  });
+
+  $('.see-your-story-button').click(function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    loading.beginLoadingAnimation();
+
+    var allAnswered = true;
+
+    $('form#wf-form-pronouns-form :input:radio:visible').each(function () {
+      var name = $(this).attr('name');
+      if ($('input:radio[name=' + name + ']:checked').length === 0) {
+        allAnswered = false;
+      }
+    });
+
+    $('form#wf-form-language-form :input:radio:visible').each(function () {
+      var name = $(this).attr('name');
+      if ($('input:radio[name=' + name + ']:checked').length === 0) {
+        allAnswered = false;
+      }
+    });
+
+    if (!allAnswered) {
+      alerts.displayAlert('error', 'Please enter values for both pronouns and language!');
+      return;
+    }
+
+    if ($('.textarea:visible').val()) {
+      let validInput = validation.validInput($('.textarea:visible').val(), 0, 300);
+      if (!validInput) {
+        return;
+      }
+    }
+
+    localStorageUtils.setSessionId();
+    form.displayBookControls();
+
+    // create character object
+    let currentCharacterObject = {
+      characterName: window.sessionStorage.getItem('currentCharacterName'),
+      hairstyleId: window.styleColourId,
+      eyesId: window.eyesId,
+      skintoneId: window.skinToneId,
+      costumeId: window.costumeId,
+      maskId: window.maskId,
+      capeId: window.capeId,
+      specialId: window.specialId,
+      sidekickId: window.sidekickColourId,
+      coverId: window.coverId,
+      pronouns: window.pronouns,
+      language: window.language,
+      dedicationMessage: window.dedicationMessage,
+    };
+
+    $('.add-to-cart-btn').attr(
+      'data-item-custom1-value',
+      window.sessionStorage.getItem('currentCharacterName')
+    );
+    $('.add-to-cart-btn').attr(
+      'data-item-custom2-value',
+      window.sessionStorage.getItem('currentCharacterId')
+    );
+    $('.add-to-cart-btn').attr('data-item-custom3-value', JSON.stringify(currentCharacterObject));
+
+    airtable.postToAirTable((id) => {
+      airtable.updateCharacter(() => {
+        location.href = '/preview?id=' + id;
+      });
+    });
+  });
+
+  $('.edit-character').click(function (e) {
+    e.preventDefault();
+    location.href = '/character-creation?page=characterSelection';
+  });
+
+  $('.select-story').click(function (e) {
+    e.preventDefault();
+    location.href = '/character-creation?page=bookSelection';
+  });
+
+  /*
+   * Add To Cart Button
+   */
+
+  $('.add-to-cart-btn').click(function (e) {
+    $('.basket-confirmation_book-item').each(function () {
+      $('.character-name-span').text(sessionStorage.currentCharacterName);
+      const expectedId = `${selectedBook}-basket-book`;
+      $(this).attr('id') === expectedId ? $(this).show() : $(this).hide();
+    });
+
+    navigation.navigateToBasketConfirmation();
+  });
+
+  /*
+   * Navigation Button Links
+   */
+
+  $('#home-button').click(function (e) {
+    navigation.navigateToCharacterSelection();
+  });
+};

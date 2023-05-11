@@ -81,9 +81,11 @@ export function configureCharacter(fields) {
 function configureInputs() {
   window.getSelectedStyles();
   form.displaySelectedColours();
+
   form.checkSelectedHairstyle(function () {
     pagination.buildPage(undefined, window.stepName);
   });
+
   renderCharacterPreview(function () {
     let userSignedIn = Snipcart.store.getState().customer.status === 'SignedIn';
     userSignedIn ? '' : loading.endLoadingAnimation();
@@ -331,6 +333,7 @@ function addCharacterItemsToDOM() {
     let imageElement = document.createElement('img');
     imageElement.classList.add('character-item-preview-image');
     imageElement.src = obj['character-item-preview-image'];
+    imageElement.loading = 'lazy';
 
     itemDiv.appendChild(categoryDiv);
     itemDiv.appendChild(labelDiv);
