@@ -121,7 +121,22 @@ window.Webflow.push(() => {
 
           if (params.get('id')) {
             previewPromise.then((preview) => {
-              loading.endLoadingAnimation();
+              document.getElementById('masterplan').innerHTML = '';
+              window.masterplan = new MasterPlan(document.getElementById('masterplan'), {
+                clientID: '5140',
+                jobID: params.get('id'),
+                theme: 'light',
+                embedType: 'frame',
+                thumbWidth: '300',
+                hideNavBar: true,
+                autoFullscreen: true,
+                showLoginLink: false,
+                clientNameLink: false,
+                showSpreadNums: false,
+                customCss: {
+                  nestedToc: true,
+                },
+              });
 
               $('#email-preview-button').click(function () {
                 let userSignedIn = Snipcart.store.getState().customer.status === 'SignedIn';
@@ -140,38 +155,40 @@ window.Webflow.push(() => {
                   alerts.displayAlert('error', 'You must sign in to save a character.');
                 }
               });
+
+              loading.endLoadingAnimation();
             });
 
-            function pollPreviewStatus() {
-              const previewPromise = airtable.getPreviewOfCharacter(params.get('id'));
+            // function pollPreviewStatus() {
+            //   const previewPromise = airtable.getPreviewOfCharacter(params.get('id'));
 
-              previewPromise.then((preview) => {
-                if (preview[0].fields['Preview Status']) {
-                  clearInterval(airtablePoll);
+            //   previewPromise.then((preview) => {
+            //     if (preview[0].fields['Preview Status']) {
+            //       clearInterval(airtablePoll);
 
-                  document.getElementById('masterplan').innerHTML = '';
-                  window.masterplan = new MasterPlan(document.getElementById('masterplan'), {
-                    clientID: '5140',
-                    jobID: preview[0].fields['PREVIEW_ID'],
-                    theme: 'light',
-                    embedType: 'frame',
-                    thumbWidth: '300',
-                    hideNavBar: true,
-                    autoFullscreen: true,
-                    showLoginLink: false,
-                    clientNameLink: false,
-                    showSpreadNums: false,
-                    customCss: {
-                      nestedToc: true,
-                    },
-                  });
-                }
-              });
-            }
+            //       document.getElementById('masterplan').innerHTML = '';
+            //       window.masterplan = new MasterPlan(document.getElementById('masterplan'), {
+            //         clientID: '5140',
+            //         jobID: preview[0].fields['PREVIEW_ID'],
+            //         theme: 'light',
+            //         embedType: 'frame',
+            //         thumbWidth: '300',
+            //         hideNavBar: true,
+            //         autoFullscreen: true,
+            //         showLoginLink: false,
+            //         clientNameLink: false,
+            //         showSpreadNums: false,
+            //         customCss: {
+            //           nestedToc: true,
+            //         },
+            //       });
+            //     }
+            //   });
+            // }
 
-            const airtablePoll = setInterval(() => {
-              pollPreviewStatus();
-            }, 5000);
+            // const airtablePoll = setInterval(() => {
+            //   pollPreviewStatus();
+            // }, 5000);
           }
         });
       }
