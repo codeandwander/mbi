@@ -549,6 +549,8 @@ window.Webflow.push(() => {
     e.preventDefault();
     e.stopPropagation();
 
+    loading.beginLoadingAnimation();
+
     var allAnswered = true;
 
     $('form#wf-form-pronouns-form :input:radio:visible').each(function () {
