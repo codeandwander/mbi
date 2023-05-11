@@ -120,24 +120,24 @@ window.Webflow.push(() => {
           form.displayBookControls();
 
           if (params.get('id')) {
-            previewPromise.then((preview) => {
-              document.getElementById('masterplan').innerHTML = '';
-              window.masterplan = new MasterPlan(document.getElementById('masterplan'), {
-                clientID: '5140',
-                jobID: params.get('id'),
-                theme: 'light',
-                embedType: 'frame',
-                thumbWidth: '300',
-                hideNavBar: true,
-                autoFullscreen: true,
-                showLoginLink: false,
-                clientNameLink: false,
-                showSpreadNums: false,
-                customCss: {
-                  nestedToc: true,
-                },
-              });
+            document.getElementById('masterplan').innerHTML = '';
+            window.masterplan = new MasterPlan(document.getElementById('masterplan'), {
+              clientID: '5140',
+              jobID: params.get('id'),
+              theme: 'light',
+              embedType: 'frame',
+              thumbWidth: '300',
+              hideNavBar: true,
+              autoFullscreen: true,
+              showLoginLink: false,
+              clientNameLink: false,
+              showSpreadNums: false,
+              customCss: {
+                nestedToc: true,
+              },
+            });
 
+            previewPromise.then((preview) => {
               $('#email-preview-button').click(function () {
                 let userSignedIn = Snipcart.store.getState().customer.status === 'SignedIn';
 
