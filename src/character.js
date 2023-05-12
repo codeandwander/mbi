@@ -210,6 +210,7 @@ export function renderCharacterPreview(callback) {
   if (maskId) {
     if (maskId === 'msk000') {
       $('.mask:visible').hide();
+      $('.sidekick-mask:visible').hide();
     } else {
       $('.mask:visible').first().hide();
       $('.sidekick-mask:visible').first().hide();
