@@ -159,24 +159,26 @@ window.Webflow.push(() => {
                 }
               });
 
-              loading.endLoadingAnimation();
+              function pollPreviewStatus() {
+                const previewPromise = airtable.getPreviewOfCharacter(params.get('id'));
+
+                previewPromise.then((preview) => {
+                  if (preview[0].fields['Preview Status'] === '1-Cover Ready') {
+                    loading.endLoadingAnimation();
+                  }
+
+                  if (preview[0].fields['Preview Status'] === '3-Full Preview') {
+                    clearInterval(airtablePoll);
+
+                    $('#email-preview-button').hide();
+                  }
+                });
+              }
+
+              const airtablePoll = setInterval(() => {
+                pollPreviewStatus();
+              }, 4000);
             });
-
-            function pollPreviewStatus() {
-              const previewPromise = airtable.getPreviewOfCharacter(params.get('id'));
-
-              previewPromise.then((preview) => {
-                if (preview[0].fields['Preview Status'] === '3-Full Preview') {
-                  clearInterval(airtablePoll);
-
-                  $('#email-preview-button').hide();
-                }
-              });
-            }
-
-            const airtablePoll = setInterval(() => {
-              pollPreviewStatus();
-            }, 4000);
           }
         });
       }
