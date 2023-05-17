@@ -113,7 +113,7 @@ window.Webflow.push(() => {
         const params = new URLSearchParams(location.search);
         const previewPromise = airtable.getPreviewOfCharacter(params.get('id'));
 
-        loading.beginLoadingAnimation();
+        if (params.get('quick')) loading.beginLoadingAnimation();
 
         Snipcart.events.on('snipcart.initialized', (snipcartState) => {
           snipcart.toggleUiElements();
@@ -138,6 +138,19 @@ window.Webflow.push(() => {
             });
 
             previewPromise.then((preview) => {
+              if (
+                preview[0].fields['Preview Status'] &&
+                preview[0].fields['Preview Status'] !== '0-Unmade'
+              ) {
+                loading.endLoadingAnimation();
+              }
+
+              if (preview[0].fields['Preview Status'] === '3-Full Preview') {
+                clearInterval(airtablePoll);
+
+                $('#email-preview-button').hide();
+              }
+
               $('#email-preview-button').click(function () {
                 let userSignedIn = Snipcart.store.getState().customer.status === 'SignedIn';
 
@@ -163,7 +176,10 @@ window.Webflow.push(() => {
                 const previewPromise = airtable.getPreviewOfCharacter(params.get('id'));
 
                 previewPromise.then((preview) => {
-                  if (preview[0].fields['Preview Status'] === '1-Cover Ready') {
+                  if (
+                    preview[0].fields['Preview Status'] &&
+                    preview[0].fields['Preview Status'] !== '0-Unmade'
+                  ) {
                     loading.endLoadingAnimation();
                   }
 
@@ -601,7 +617,7 @@ window.Webflow.push(() => {
 
     airtable.postToAirTable((id) => {
       airtable.updateCharacter(() => {
-        location.href = '/preview?id=' + id;
+        location.href = '/preview?id=' + id + '&quick';
       });
     });
   });
