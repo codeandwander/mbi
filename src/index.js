@@ -138,18 +138,20 @@ window.Webflow.push(() => {
             });
 
             previewPromise.then((preview) => {
-              if (
-                preview[0].fields['Preview Status'] &&
-                preview[0].fields['Preview Status'] !== '0-Unmade'
-              ) {
-                loading.endLoadingAnimation();
-              }
+              loading.endLoadingAnimation();
 
-              if (preview[0].fields['Preview Status'] === '3-Full Preview') {
-                clearInterval(airtablePoll);
+              // if (
+              //   preview[0].fields['Preview Status'] &&
+              //   preview[0].fields['Preview Status'] !== '0-Unmade'
+              // ) {
+              //   loading.endLoadingAnimation();
+              // }
 
-                $('#email-preview-button').hide();
-              }
+              // if (preview[0].fields['Preview Status'] === '3-Full Preview') {
+              //   clearInterval(airtablePoll);
+
+              //   $('#email-preview-button').hide();
+              // }
 
               $('#email-preview-button').click(function () {
                 let userSignedIn = Snipcart.store.getState().customer.status === 'SignedIn';
