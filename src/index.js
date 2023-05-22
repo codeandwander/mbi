@@ -191,9 +191,9 @@ window.Webflow.push(() => {
                 });
               }
 
-              const airtablePoll = setInterval(() => {
-                pollPreviewStatus();
-              }, 4000);
+              // const airtablePoll = setInterval(() => {
+              //   pollPreviewStatus();
+              // }, 4000);
             });
           }
         });
