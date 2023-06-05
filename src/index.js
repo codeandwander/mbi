@@ -123,16 +123,24 @@ window.Webflow.push(() => {
             document.getElementById('masterplan').innerHTML = '';
             window.masterplan = new MasterPlan(document.getElementById('masterplan'), {
               clientID: '5140',
-              jobID: params.get('id'),
+              jobID: '1367',
               theme: 'light',
               embedType: 'frame',
-              thumbWidth: '300',
-              hideNavBar: true,
-              autoFullscreen: true,
+              thumbWidth: '800',
+              openImmediately: false,
+              autoFullscreen: false,
+              clientNameDisplay: false,
+              headerAtTop: true,
               showLoginLink: false,
+              fitContentHeight: false,
+              iframeHeight: '500',
               clientNameLink: false,
+              showSearchBar: false,
               showSpreadNums: false,
               customCss: {
+                navBar: {
+                  background: '#919191',
+                },
                 nestedToc: true,
               },
             });
