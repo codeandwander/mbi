@@ -75,7 +75,7 @@ window.Webflow.push(() => {
           window.randomiseOrLoadCharacter();
         });
 
-        Snipcart.events.on('customer.signedout', (customer) => {
+        Snipcart.events.on('customer.signedout', (curstomer) => {
           console.log('customer signed out');
 
           sessionStorage.clear();
@@ -123,7 +123,7 @@ window.Webflow.push(() => {
             document.getElementById('masterplan').innerHTML = '';
             window.masterplan = new MasterPlan(document.getElementById('masterplan'), {
               clientID: '5140',
-              jobID: '1367',
+              jobID: params.get('id'),
               theme: 'light',
               embedType: 'frame',
               thumbWidth: '800',
