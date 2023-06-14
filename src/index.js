@@ -148,19 +148,6 @@ window.Webflow.push(() => {
             previewPromise.then((preview) => {
               loading.endLoadingAnimation();
 
-              // if (
-              //   preview[0].fields['Preview Status'] &&
-              //   preview[0].fields['Preview Status'] !== '0-Unmade'
-              // ) {
-              //   loading.endLoadingAnimation();
-              // }
-
-              // if (preview[0].fields['Preview Status'] === '3-Full Preview') {
-              //   clearInterval(airtablePoll);
-
-              //   $('#email-preview-button').hide();
-              // }
-
               $('#email-preview-button').click(function () {
                 let userSignedIn = Snipcart.store.getState().customer.status === 'SignedIn';
 
@@ -181,29 +168,6 @@ window.Webflow.push(() => {
                   alerts.displayAlert('error', 'You must sign in to save a character.');
                 }
               });
-
-              function pollPreviewStatus() {
-                const previewPromise = airtable.getPreviewOfCharacter(params.get('id'));
-
-                previewPromise.then((preview) => {
-                  if (
-                    preview[0].fields['Preview Status'] &&
-                    preview[0].fields['Preview Status'] !== '0-Unmade'
-                  ) {
-                    loading.endLoadingAnimation();
-                  }
-
-                  if (preview[0].fields['Preview Status'] === '3-Full Preview') {
-                    clearInterval(airtablePoll);
-
-                    $('#email-preview-button').hide();
-                  }
-                });
-              }
-
-              // const airtablePoll = setInterval(() => {
-              //   pollPreviewStatus();
-              // }, 4000);
             });
           }
         });
@@ -634,7 +598,12 @@ window.Webflow.push(() => {
 
   $('.edit-character').click(function (e) {
     e.preventDefault();
-    location.href = '/character-creation?page=characterSelection';
+
+    loading.beginLoadingAnimation();
+
+    airtable.duplicateCharacter(() => {
+      location.href = '/character-creation?page=characterSelection&edit=true';
+    });
   });
 
   $('.select-story').click(function (e) {

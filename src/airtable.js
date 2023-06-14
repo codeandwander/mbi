@@ -43,6 +43,8 @@ export function getUserCharacters(userEmail) {
     .then((response) => response.text())
     .then((result) => {
       result = JSON.parse(result);
+      result.records = result.records.filter((record) => !record.fields.DUPLICATE_ID);
+
       return result.records.slice(Math.max(result.records.length - 5, 0));
     })
     .catch((error) => console.log('error', error));
@@ -106,7 +108,7 @@ export function postToAirTable(callback) {
     .then((result) => {
       const currentPreviewId = `${result[0]['fields']['PREVIEW_ID']}`;
       localStorage.setItem('currentPreviewId', currentPreviewId);
-      
+
       fetch(
         `https://hook.eu1.make.com/0kxggab30625jvpqkvviz6fo9dvxzryf?string=P-${encodeURIComponent(
           result[0]['fields']['RECORD_ID']
@@ -134,6 +136,7 @@ export function addCharacter(callback) {
       COVER_COLOUR: coverId,
     },
   ];
+
   const myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
   const requestOptions = {
@@ -149,14 +152,79 @@ export function addCharacter(callback) {
   )
     .then((response) => response.json())
     .then((result) => {
-      // fetch(
-      //   `https://hook.eu1.make.com/0kxggab30625jvpqkvviz6fo9dvxzryf?string=C-${encodeURIComponent(
-      //     result[0]['fields']['RECORD_ID']
-      //   )}-CREATED`
-      // );
       sessionStorage.setItem('currentCharacterId', result[0]['fields']['RECORD_ID']);
+      localStorage.setItem('currentCharacter', JSON.stringify(result[0]['fields']));
       callback && callback();
       return result[0];
+    })
+    .catch((error) => console.log('error', error));
+
+  return record;
+}
+
+export function duplicateCharacter(callback) {
+  const currentCharacter = localStorage.getItem('currentCharacter');
+
+  if (!currentCharacter) {
+    return;
+  }
+
+  const data = JSON.parse(currentCharacter);
+  delete data.RECORD_NUMBER;
+  delete data.RECORD_ID;
+  delete data.MODIFIED_AT;
+  delete data.CREATED_AT;
+  delete data['Last Modified'];
+
+  const testBody = [
+    {
+      ...data,
+    },
+  ];
+  const myHeaders = new Headers();
+  myHeaders.append('Content-Type', 'application/json');
+  const requestOptions = {
+    method: 'post',
+    headers: myHeaders,
+    redirect: 'follow',
+    body: JSON.stringify(testBody),
+  };
+
+  const record = fetch(
+    'https://v1.nocodeapi.com/makebelieveme/airtable/nmeOnHAeFloOUpCL?tableName=Characters',
+    requestOptions
+  )
+    .then((response) => response.json())
+    .then((newCharacter) => {
+      const myHeaders = new Headers();
+      myHeaders.append('Content-Type', 'application/json');
+      const requestOptions = {
+        method: 'put',
+        headers: myHeaders,
+        redirect: 'follow',
+        body: JSON.stringify([
+          {
+            id: sessionStorage.getItem('currentCharacterId'),
+            fields: {
+              DUPLICATE_ID: newCharacter[0]['fields']['RECORD_ID'],
+            },
+          },
+        ]),
+      };
+
+      return fetch(
+        'https://v1.nocodeapi.com/makebelieveme/airtable/nmeOnHAeFloOUpCL?tableName=Characters',
+        requestOptions
+      )
+        .then((response) => response.json())
+        .then((result) => {
+          sessionStorage.setItem('currentCharacterId', newCharacter[0]['fields']['RECORD_ID']);
+
+          callback && callback();
+
+          return newCharacter[0];
+        })
+        .catch((error) => console.log('error', error));
     })
     .catch((error) => console.log('error', error));
 
@@ -197,11 +265,8 @@ export function updateCharacter(callback) {
   )
     .then((response) => response.json())
     .then((result) => {
-      // fetch(
-      //   `https://hook.eu1.make.com/0kxggab30625jvpqkvviz6fo9dvxzryf?string=C-${sessionStorage.getItem(
-      //     encodeURIComponent('currentCharacterId')
-      //   )}-MODIFIED`
-      // );
+      localStorage.setItem('currentCharacter', JSON.stringify(testBody[0]['fields']));
+
       callback && callback();
     })
     .catch((error) => console.log('error', error));
