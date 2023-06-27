@@ -171,6 +171,12 @@ window.Webflow.push(() => {
             });
           }
         });
+
+        Snipcart.events.on('customer.signedin', (customer) => {
+          airtable.updateCharacterEmail(() => {
+            console.log('email updated');
+          });
+        });
       }
 
       // Pagination

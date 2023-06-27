@@ -272,6 +272,37 @@ export function updateCharacter(callback) {
     .catch((error) => console.log('error', error));
 }
 
+export function updateCharacterEmail(callback) {
+  const testBody = [
+    {
+      id: sessionStorage.getItem('currentCharacterId'),
+      fields: {
+        USER_EMAIL: snipcart.getUserEmail(),
+      },
+    },
+  ];
+  const myHeaders = new Headers();
+  myHeaders.append('Content-Type', 'application/json');
+  const requestOptions = {
+    method: 'put',
+    headers: myHeaders,
+    redirect: 'follow',
+    body: JSON.stringify(testBody),
+  };
+
+  fetch(
+    'https://v1.nocodeapi.com/makebelieveme/airtable/nmeOnHAeFloOUpCL?tableName=Characters',
+    requestOptions
+  )
+    .then((response) => response.json())
+    .then((result) => {
+      localStorage.setItem('currentCharacter', JSON.stringify(testBody[0]['fields']));
+
+      callback && callback();
+    })
+    .catch((error) => console.log('error', error));
+}
+
 export function deleteCharacter(id, name) {
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
