@@ -296,8 +296,35 @@ export function updateCharacterEmail(callback) {
   )
     .then((response) => response.json())
     .then((result) => {
-      localStorage.setItem('currentCharacter', JSON.stringify(testBody[0]['fields']));
+      callback && callback();
+    })
+    .catch((error) => console.log('error', error));
+}
 
+export function updatePreviewEmail(previewId, callback) {
+  const testBody = [
+    {
+      id: previewId,
+      fields: {
+        USER_EMAIL: snipcart.getUserEmail(),
+      },
+    },
+  ];
+  const myHeaders = new Headers();
+  myHeaders.append('Content-Type', 'application/json');
+  const requestOptions = {
+    method: 'put',
+    headers: myHeaders,
+    redirect: 'follow',
+    body: JSON.stringify(testBody),
+  };
+
+  fetch(
+    'https://v1.nocodeapi.com/makebelieveme/airtable/nmeOnHAeFloOUpCL?tableName=Previews',
+    requestOptions
+  )
+    .then((response) => response.json())
+    .then((result) => {
       callback && callback();
     })
     .catch((error) => console.log('error', error));
