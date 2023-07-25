@@ -117,7 +117,7 @@ export function saveCharacter() {
     ? airtable.addCharacter(
         alerts.displayAlert('success', `${heroNameInput} was saved successfully!`)
       )
-    : airtable.updateCharacter(
+    : airtable.duplicateCharacter(
         alerts.displayAlert('success', `${heroNameInput} was saved successfully!`)
       );
   form.appendCharacterDropdownItems(loading.endLoadingAnimation);

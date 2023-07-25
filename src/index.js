@@ -475,7 +475,7 @@ window.Webflow.push(() => {
       ? airtable.addCharacter(
           alerts.displayAlert('success', `${$('#hero-name-input').val()} was saved successfully!`)
         )
-      : airtable.updateCharacter(
+      : airtable.duplicateCharacter(
           alerts.displayAlert('success', `${$('#hero-name-input').val()} was saved successfully!`)
         );
 
