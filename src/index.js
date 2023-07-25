@@ -165,7 +165,7 @@ window.Webflow.push(() => {
                     console.log(response);
                   });
                 } else {
-                  alerts.displayAlert('error', 'You must sign in to save a character.');
+                  alerts.displayAlert('error', 'You must sign in to request a full preview.');
                 }
               });
             });
@@ -173,11 +173,17 @@ window.Webflow.push(() => {
         });
 
         Snipcart.events.on('customer.signedin', (customer) => {
-          airtable.updateCharacterEmail(() => {
-            console.log('email updated');
+          snipcart.toggleUiElements();
 
-            airtable.updatePreviewEmail(params.get('id'), () => {
-              console.log('preview email updated');
+          previewPromise.then((preview) => {
+            // console.log('preview fetched')
+
+            airtable.updateCharacterEmail(() => {
+              // console.log('email updated');
+
+              airtable.updatePreviewEmail(preview[0]['fields']['RECORD_ID'], () => {
+                // console.log('preview email updated');
+              });
             });
           });
         });
