@@ -79,6 +79,8 @@ export function getRecord(characterId) {
 
 // Post Airtable Record
 export function postToAirTable(callback) {
+  console.log('postToAirTable - currentCharacterId', sessionStorage.getItem('currentCharacterId'));
+
   const testBody = [
     {
       // need to factor in log in character stuff
@@ -219,6 +221,8 @@ export function duplicateCharacter(callback) {
         .then((response) => response.json())
         .then((result) => {
           sessionStorage.setItem('currentCharacterId', newCharacter[0]['fields']['RECORD_ID']);
+
+          console.log('currentCharacterId', sessionStorage.getItem('currentCharacterId'));
 
           callback && callback();
 

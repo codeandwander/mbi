@@ -477,17 +477,27 @@ window.Webflow.push(() => {
 
     let currentCharacterId = sessionStorage.getItem('currentCharacterId');
     sessionStorage.setItem('currentCharacterName', $('#hero-name-input').val());
+
+    console.log('pick-a-book - currentCharacterId', currentCharacterId);
+
+    loading.beginLoadingAnimation();
+
     currentCharacterId === null
-      ? airtable.addCharacter(
-          alerts.displayAlert('success', `${$('#hero-name-input').val()} was saved successfully!`)
-        )
-      : airtable.duplicateCharacter(
-          alerts.displayAlert('success', `${$('#hero-name-input').val()} was saved successfully!`)
-        );
+      ? airtable.addCharacter(() => {
+          alerts.displayAlert('success', `${$('#hero-name-input').val()} was saved successfully!`);
 
-    form.appendCharacterDropdownItems(loading.endLoadingAnimation);
+          form.appendCharacterDropdownItems(loading.endLoadingAnimation);
+          navigation.navigateToBookSelection();
+        })
+      : airtable.duplicateCharacter(() => {
+          alerts.displayAlert(
+            'success',
+            `${$('#hero-name-input').val()} was duplicated successfully!`
+          );
 
-    navigation.navigateToBookSelection();
+          form.appendCharacterDropdownItems(loading.endLoadingAnimation);
+          navigation.navigateToBookSelection();
+        });
   });
 
   $('.edit-character-button').click(function (e) {
