@@ -54,6 +54,8 @@ export function appendCharacterDropdownItems(callback) {
   characterDropdownList.empty();
 
   characterList.then((result) => {
+    console.log('result', result);
+
     var itemsProcessed = 0;
 
     $.each(result, function (index) {
@@ -74,6 +76,8 @@ export function appendCharacterDropdownItems(callback) {
       $wrapper.clone().appendTo(characterDropdownList);
 
       itemsProcessed++;
+
+      console.log('itemsProcessed', itemsProcessed, result.length);
 
       if (itemsProcessed === result.length) {
         callback && callback();

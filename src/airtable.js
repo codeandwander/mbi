@@ -37,15 +37,19 @@ export function getUserCharacters(userEmail) {
   };
 
   const record = fetch(
-    `https://v1.nocodeapi.com/makebelieveme/airtable/nmeOnHAeFloOUpCL?tableName=Characters&filterByFormula=USER_EMAIL="${userEmail}"&t=${Date.now()}`,
+    `https://v1.nocodeapi.com/makebelieveme/airtable/nmeOnHAeFloOUpCL?tableName=Characters&filterByFormula=USER_EMAIL="${userEmail}"&sortBy=CREATED_AT&sortDirection=desc&t=${Date.now()}`,
     requestOptions
   )
-    .then((response) => response.text())
+    .then((response) => response.json())
     .then((result) => {
-      result = JSON.parse(result);
-      result.records = result.records.filter((record) => !record.fields.DUPLICATE_ID);
+      //result.records = result.records.filter((record) => !record.fields.DUPLICATE_ID);
 
-      return result.records.slice(Math.max(result.records.length - 5, 0));
+      // const sortedRecords = result.records.sort(
+      //   (a, b) => new Date(a.createdTime) - new Date(b.createdTime)
+      // );
+      // console.log('getUserCharacters', result.records);
+
+      return result.records.slice(0, 5);
     })
     .catch((error) => console.log('error', error));
 
@@ -123,6 +127,8 @@ export function postToAirTable(callback) {
 }
 
 export function addCharacter(callback) {
+  console.log('addCharacter');
+
   const testBody = [
     {
       NAME: $('#hero-name-input').val(),
@@ -154,6 +160,8 @@ export function addCharacter(callback) {
   )
     .then((response) => response.json())
     .then((result) => {
+      console.log('result', result);
+
       sessionStorage.setItem('currentCharacterId', result[0]['fields']['RECORD_ID']);
       localStorage.setItem('currentCharacter', JSON.stringify(result[0]['fields']));
       callback && callback();

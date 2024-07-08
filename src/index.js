@@ -485,12 +485,16 @@ window.Webflow.push(() => {
 
     currentCharacterId === null
       ? airtable.addCharacter(() => {
+          console.log('pick-a-book - addCharacter');
+
           alerts.displayAlert('success', `${$('#hero-name-input').val()} was saved successfully!`);
 
           form.appendCharacterDropdownItems(loading.endLoadingAnimation);
           navigation.navigateToBookSelection();
         })
       : airtable.duplicateCharacter(() => {
+          console.log('pick-a-book - duplicateCharacter');
+
           alerts.displayAlert(
             'success',
             `${$('#hero-name-input').val()} was duplicated successfully!`
