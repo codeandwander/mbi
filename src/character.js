@@ -85,8 +85,9 @@ function configureInputs() {
     pagination.buildPage(undefined, window.stepName);
   });
   renderCharacterPreview(function () {
-    let userSignedIn = Snipcart.store.getState().customer.status === 'SignedIn';
-    userSignedIn ? '' : loading.endLoadingAnimation();
+    // let userSignedIn = Snipcart.store.getState().customer.status === 'SignedIn';
+    // userSignedIn ? '' : loading.endLoadingAnimation();
+    loading.endLoadingAnimation();
   });
 }
 
